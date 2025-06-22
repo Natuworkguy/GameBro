@@ -212,19 +212,25 @@ def get_user_input(prompt, initial=""):
 
 def newsprite():
     if len(sprites) < 23:
-        name = get_user_input("Enter sprite name:")
+        name = get_user_input("Enter sprite name: ")
         if not name or not name.strip():
             return
         if any(s['name'] == name for s in sprites):
             wait_for_keypress("Sprite name exists!")
             return
+        if is_int(name) or name in ["Sprite", "SpriteGroup", *banned_kwords] or name.startswith("Sprite_") or name.startswith("Group_"):
+            wait_for_keypress("Invalid sprite name!")
+            return
         sprites.append({"name": name, "data": {"x": 0, "y": 0, "visible": True, "id": len(sprites)}})
 
 def newgroup():
-    name = get_user_input("Enter group name:")
+    name = get_user_input("Enter group name: ")
     if name and name.strip():
         if any(g['name'] == name for g in groups):
             wait_for_keypress("Group name exists!")
+            return
+        if is_int(name) or name in ["Sprite", "SpriteGroup", *banned_kwords] or name.startswith("Sprite_") or name.startswith("Group_"):
+            wait_for_keypress("Invalid group name!")
             return
         groups.append({"name": name, "sprites": []})
 
@@ -345,6 +351,7 @@ while True:
                     match newkey:
                         case "name" | "data" | "visible" | "id":
                             wait_for_keypress("Key unavailable")
+                            continue
                     newval: str = get_user_input("Enter the value for the new key: ")
                     sprites[selected_sprite_index]['data'][newkey] = newval
             elif event.key == pygame.K_d and pygame.key.get_mods() & pygame.KMOD_CTRL:
@@ -355,6 +362,7 @@ while True:
                     match keytodelete:
                         case "name" | "data" | "visible" | "id":
                             wait_for_keypress("Cannot delete system key")
+                            continue
                     del sprites[selected_sprite_index]['data'][keytodelete]
                 elif groupselected:
                     delete_group(selected_group_index)
