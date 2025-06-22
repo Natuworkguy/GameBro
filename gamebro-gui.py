@@ -1,4 +1,5 @@
 import pygame
+import os
 import sys
 
 # Initialize Pygame
@@ -18,6 +19,7 @@ FONT = pygame.font.SysFont("consolas", 20)
 # Create window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Gamebro Studio")
+pygame.display.set_icon(pygame.image.load(os.path.join('assets', 'icon.png')))
 clock = pygame.time.Clock()
 
 # App states
@@ -74,7 +76,7 @@ def write_project_file():
 def insert_newlines(text, max_chars):
     return '\n'.join(text[i:i+max_chars] for i in range(0, len(text), max_chars))
 
-def get_user_input(initial=""):
+def get_user_input(prompt, initial=""):
     """Capture user keyboard input until Enter is pressed."""
     text = initial
     active = True
@@ -93,7 +95,7 @@ def get_user_input(initial=""):
                 else:
                     text += event.unicode
         screen.fill(BG_COLOR)
-        draw_text("Enter Input:", 10, 10, screen)
+        draw_text(prompt, 10, 10, screen)
         draw_text(text, 10, 40, screen, ACCENT_COLOR)
         pygame.display.flip()
         clock.tick(FPS)
@@ -101,7 +103,21 @@ def get_user_input(initial=""):
 
 def newsprite():
     if len(sprites) < 23:
-        sprites.append({"name": f"Sprite{len(sprites)}", "data": {"x": 0, "y": 0, "visible": True}})
+        sprites.append({"name": f"Sprite{len(sprites)}", "data": {"x": 0, "y": 0, "visible": True, "id": len(sprites)}})
+
+def wait_for_keypress(message: str):
+    """Displays a message and waits for the user to press any key."""
+    while True:
+        screen.fill(BG_COLOR)
+        draw_text(message, WIDTH // 2 - FONT.size(message)[0] // 2, HEIGHT // 2, screen, ACCENT_COLOR)
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                return
 # Main loop
 while True:
     screen.fill(BG_COLOR)
@@ -134,9 +150,9 @@ while True:
                 spriteselected = False
             elif event.key == pygame.K_r:
                 if spriteselected:
-                    nameinput = get_user_input()
+                    nameinput = get_user_input("Rename sprite to: ")
                     if nameinput is None:
-                        continue
+                        continue # User exited
                     sprites[selected_sprite_index]['name'] = nameinput
                     spriteselected = False
                     continue
@@ -144,18 +160,28 @@ while True:
                 write_project_file()                                
             elif event.key == pygame.K_n and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 newsprite()
+            elif event.key == pygame.K_k and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                if spriteselected:
+                    newkey: str = get_user_input("Enter the key for the new data: ")
+                    if newkey is None:
+                        continue
+                    match newkey:
+                        case "name" | "data" | "visible" | "id":
+                            wait_for_keypress("Key unavalible")
+                    newval: str = get_user_input("Enter the value for the new key: ")
+                    sprites[selected_sprite_index]['data'][newkey] = newval
+            elif event.key == pygame.K_d and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                if spriteselected:
+                    keytodelete: str = get_user_input("Enter the key to delete: ")
+                    if keytodelete is None:
+                        continue
+                    match keytodelete:
+                        case "name" | "data" | "visible" | "id":
+                            wait_for_keypress("Cannot delete system key")
+                    del sprites[selected_sprite_index]['data'][keytodelete]
             elif event.key == pygame.K_x and pygame.key.get_mods() & pygame.KMOD_CTRL:
-                spritetodelete = get_user_input()
-                if spritetodelete is None:
-                    continue
-                try:
-                    num = int(spritetodelete)
-                except (TypeError, ValueError):
-                    continue # User entered letters
-                try:
-                    sprites.remove(sprites[num]) 
-                except IndexError:
-                    continue # Sprite does not exist
+                if spriteselected:
+                    del sprites[selected_sprite_index]
 
     if state == MENU:
         # Title
@@ -209,7 +235,7 @@ while True:
         if spriteselected:
             try:
                 draw_text(f"Name: {sprites[selected_sprite_index]['name']}", inspector_rect.x + 10 + len(sprites[selected_sprite_index]['name']), inspector_rect.y + 60, screen)
-                draw_text(f"Data: \n{insert_newlines(str(sprites[selected_sprite_index]['data']), 16).replace(',', ',\n ').replace('{', '{\n  ')}", inspector_rect.x + 10 + len(sprites[selected_sprite_index]['data']), inspector_rect.y + 90, screen)
+                draw_text(f"Data: \n{insert_newlines(str(sprites[selected_sprite_index]['data']), 15).replace(',', ',\n ').replace('{', '{\n  ')}", inspector_rect.x + 10 + len(sprites[selected_sprite_index]['data']), inspector_rect.y + 90, screen)
             except IndexError:
                 spriteselected = False
                 continue # User deleted sprite while viewing it
