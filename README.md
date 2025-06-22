@@ -43,6 +43,39 @@ That’s it. A clean GUI will launch. You can:
 * Save your project (`Ctrl + S`) as a real `.py` file!
 
 ---
+# Gamebro Studio Keybinds
+
+**Global:**
+- `Ctrl+S` — Save Project
+
+**Sprites:**
+- `Ctrl+N` — Add New Sprite
+- `Ctrl+X` — Delete Selected Sprite (also removes it from all groups)
+- `Ctrl+K` — Add Data Key to Selected Sprite
+- `Ctrl+D` — Delete Data Key from Selected Sprite
+- `R`      — Rename Selected Sprite (when a sprite is selected)
+- `C`      — Clear Selection
+
+**Groups:**
+- `Ctrl+G` — Add New Group
+- `Ctrl+D` — Delete Selected Group (when a group is selected)
+- `Ctrl+A` — Add Sprite to Selected Group
+- `Ctrl+Z` — Remove Sprite from Selected Group
+- `R`      — Rename Selected Group (when a group is selected)
+- `C`      — Clear Selection
+
+**Navigation:**
+- Click on sprite name — Select sprite
+- Click on group name  — Select group
+
+**Inspector:**
+- Shows details for selected sprite or group.
+
+---
+
+> Tip: Most actions require a sprite or group to be selected. Use the mouse to select items in the Sprites or Groups panel.
+
+---
 
 ## 🧠 Example Output
 
