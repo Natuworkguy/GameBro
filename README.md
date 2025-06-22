@@ -90,9 +90,9 @@ Enemy = Sprite(customdata={'x': 100, 'y': 50, 'visible': True}, name="Enemy")
 ```
 ---
 
-## OR, if you want to go pro,
+# OR, if you want to go pro,
 
-You can write the code yourself, using the gamebro module
+You can write the code yourself, using the gamebro module (see [this document](scripting/basics.md).)
 
 ---
 
