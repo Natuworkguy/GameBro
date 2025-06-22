@@ -27,17 +27,18 @@ This code snippet shows how to:
 
 ```python
 from gamebro import Sprite, SpriteGroup
+from typing import Self
 
 # Create a sprite
-bro = Sprite(name="Bro", customdata={})
+bro: Sprite = Sprite(name="Bro", customdata={})
 
 # Register an event listener for when this sprite is added to a group
 @bro.addeventlistener("group-add")
-def on_view(self, group: SpriteGroup) -> None:
-    print(f"{self.name} was added to a group!")
+def on_view(self: Self, group: SpriteGroup) -> None:
+    print(f"{self.name} was added to a group ({group})!")
 
 # Create a group and add the sprite to it
-group = SpriteGroup(bro)
+group: SpriteGroup = SpriteGroup(bro)
 ```
 
 ### ✅ Output
