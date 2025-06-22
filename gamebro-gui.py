@@ -30,6 +30,7 @@ state = MENU
 # Project state
 project_name = ""
 sprites = []
+groups = []  # List of {"name": str, "sprites": [sprite names]}
 
 # Input box
 input_active = False
@@ -39,9 +40,11 @@ input_box = pygame.Rect(300, 250, 360, 40)
 new_project_btn = pygame.Rect(380, 310, 235, 50)
 new_sprite_btn = pygame.Rect(10, 550, 180, 40)
 save_btn = pygame.Rect(770, 550, 180, 40)
+new_group_btn = pygame.Rect(210, 550, 180, 40)
 
 # Panels for editor
 sprites_rect = pygame.Rect(0, 30, 200, HEIGHT - 90)
+groups_rect = pygame.Rect(200, 30, 220, HEIGHT - 90)
 inspector_rect = pygame.Rect(760, 30, 200, HEIGHT - 90)
 topbar_rect = pygame.Rect(0, 0, WIDTH, 30)
 
@@ -50,6 +53,15 @@ selected_sprite_index = None
 spriteselected = False
 rename_text = ""
 rename_input_box = pygame.Rect(0, 0, 180, 30)  # Will position dynamically
+
+selected_group_index = None
+groupselected = False
+group_rename_text = ""
+group_rename_input_box = pygame.Rect(0, 0, 180, 30)
+
+# For adding/removing sprites to/from groups
+adding_to_group = False
+removing_from_group = False
 
 # Helper functions
 def draw_text(text, x, y, surface, color=TEXT_COLOR):
@@ -72,6 +84,9 @@ def write_project_file():
         f.write(f"# Project: {project_name}\n")
         for sprite in sprites:
             f.write(f"{sprite['name']} = Sprite(customdata={sprite['data']}, name=\"{sprite['name']}\")\n")
+        for group in groups:
+            members = ', '.join(group['sprites'])
+            f.write(f"{group['name']} = SpriteGroup({members})\n")
 
 def insert_newlines(text, max_chars):
     return '\n'.join(text[i:i+max_chars] for i in range(0, len(text), max_chars))
@@ -105,6 +120,14 @@ def newsprite():
     if len(sprites) < 23:
         sprites.append({"name": f"Sprite{len(sprites)}", "data": {"x": 0, "y": 0, "visible": True, "id": len(sprites)}})
 
+def newgroup():
+    name = get_user_input("Enter group name:")
+    if name and name.strip():
+        if any(g['name'] == name for g in groups):
+            wait_for_keypress("Group name exists!")
+            return
+        groups.append({"name": name, "sprites": []})
+
 def wait_for_keypress(message: str):
     """Displays a message and waits for the user to press any key."""
     while True:
@@ -118,6 +141,51 @@ def wait_for_keypress(message: str):
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 return
+
+def add_sprite_to_group(group_idx):
+    """Let user select a sprite to add to the selected group."""
+    if not sprites:
+        wait_for_keypress("No sprites to add!")
+        return
+    names = [s['name'] for s in sprites if s['name'] not in groups[group_idx]['sprites']]
+    if not names:
+        wait_for_keypress("All sprites already in group!")
+        return
+    prompt = "Add which sprite? " + ', '.join(names)
+    name = get_user_input(prompt)
+    if name in names:
+        groups[group_idx]['sprites'].append(name)
+    else:
+        wait_for_keypress("Invalid sprite name!")
+
+def remove_sprite_from_group(group_idx):
+    """Let user select a sprite to remove from the selected group."""
+    if not groups[group_idx]['sprites']:
+        wait_for_keypress("Group empty.")
+        return
+    prompt = "Remove which sprite? " + ', '.join(groups[group_idx]['sprites'])
+    name = get_user_input(prompt)
+    if name in groups[group_idx]['sprites']:
+        groups[group_idx]['sprites'].remove(name)
+    else:
+        wait_for_keypress("Invalid sprite name!")
+
+def delete_group(group_idx):
+    del groups[group_idx]
+
+def rename_group(group_idx):
+    name = get_user_input("Rename group to:", initial=groups[group_idx]['name'])
+    if name and name.strip():
+        if any(g['name'] == name for g in groups if g != groups[group_idx]):
+            wait_for_keypress("Group name exists!")
+            return
+        groups[group_idx]['name'] = name
+
+def remove_sprite_from_all_groups(sprite_name):
+    for group in groups:
+        if sprite_name in group['sprites']:
+            group['sprites'].remove(sprite_name)
+
 # Main loop
 while True:
     screen.fill(BG_COLOR)
@@ -148,6 +216,7 @@ while True:
             # Editor Keybinds
             if event.key == pygame.K_c:
                 spriteselected = False
+                groupselected = False
             elif event.key == pygame.K_r:
                 if spriteselected:
                     nameinput = get_user_input("Rename sprite to: ")
@@ -156,10 +225,17 @@ while True:
                     sprites[selected_sprite_index]['name'] = nameinput
                     spriteselected = False
                     continue
+                elif groupselected:
+                    rename_group(selected_group_index)
+                    groupselected = False
+                    continue
             elif event.key == pygame.K_s and pygame.key.get_mods() & pygame.KMOD_CTRL:
-                write_project_file()                                
+                if project_name.strip() and state == EDITOR:
+                    write_project_file()                                
             elif event.key == pygame.K_n and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 newsprite()
+            elif event.key == pygame.K_g and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                newgroup()
             elif event.key == pygame.K_k and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 if spriteselected:
                     newkey: str = get_user_input("Enter the key for the new data: ")
@@ -167,7 +243,7 @@ while True:
                         continue
                     match newkey:
                         case "name" | "data" | "visible" | "id":
-                            wait_for_keypress("Key unavalible")
+                            wait_for_keypress("Key unavailable")
                     newval: str = get_user_input("Enter the value for the new key: ")
                     sprites[selected_sprite_index]['data'][newkey] = newval
             elif event.key == pygame.K_d and pygame.key.get_mods() & pygame.KMOD_CTRL:
@@ -179,9 +255,21 @@ while True:
                         case "name" | "data" | "visible" | "id":
                             wait_for_keypress("Cannot delete system key")
                     del sprites[selected_sprite_index]['data'][keytodelete]
+                elif groupselected:
+                    delete_group(selected_group_index)
+                    groupselected = False
             elif event.key == pygame.K_x and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 if spriteselected:
+                    sprite_name = sprites[selected_sprite_index]['name']
+                    remove_sprite_from_all_groups(sprite_name)
                     del sprites[selected_sprite_index]
+                    spriteselected = False
+            elif event.key == pygame.K_a and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                if groupselected:
+                    add_sprite_to_group(selected_group_index)
+            elif event.key == pygame.K_z and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                if groupselected:
+                    remove_sprite_from_group(selected_group_index)
 
     if state == MENU:
         # Title
@@ -200,20 +288,12 @@ while True:
         pygame.draw.rect(screen, (15, 15, 15), topbar_rect)
         draw_text(f"Project: {project_name}", 10, 5, screen, ACCENT_COLOR)
 
+        # Sprites panel
         pygame.draw.rect(screen, PANEL_COLOR, sprites_rect)
-        pygame.draw.rect(screen, PANEL_COLOR, inspector_rect)
         draw_text("Sprites".center(20), 10, 40, screen)
-        draw_text("Inspector".center(20), inspector_rect.x + 10, inspector_rect.y + 10, screen)
-
-        # Reset mouse_clicked to handle events correctly
-        clicked_this_frame = mouse_clicked
-        mouse_clicked = False  # prevent double handling below
-
-        # Draw sprite list with clickable names & handle renaming
         for i, s in enumerate(sprites):
             y_pos = 60 + i * 20 + 10
             if spriteselected and selected_sprite_index == i:
-                # Draw input box for renaming
                 rename_input_box.topleft = (10, y_pos - 5)
                 pygame.draw.rect(screen, (50, 50, 50), rename_input_box)
                 draw_text(rename_text, rename_input_box.x + 5, rename_input_box.y + 5, screen)
@@ -221,29 +301,73 @@ while True:
                 draw_text(f"- {s['name']}", 10, y_pos, screen)
 
         # Detect clicks on sprite names to start renaming
-        if clicked_this_frame and not spriteselected:
+        clicked_this_frame = mouse_clicked
+        mouse_clicked = False  # prevent double handling below
+
+        if clicked_this_frame and not spriteselected and not groupselected:
             for i, s in enumerate(sprites):
                 y_pos = 60 + i * 20
                 name_rect = pygame.Rect(10, y_pos, 180, 20)
                 if name_rect.collidepoint(mouse_pos):
                     selected_sprite_index = i
                     spriteselected = True
+                    groupselected = False
                     rename_text = sprites[i]['name']
                     break
 
-        # Handle renaming input events
+        # Groups panel
+        pygame.draw.rect(screen, PANEL_COLOR, groups_rect)
+        draw_text("Groups".center(20), groups_rect.x + 10, 40, screen)
+        for i, g in enumerate(groups):
+            y_pos = 60 + i * 20 + 10
+            if groupselected and selected_group_index == i:
+                group_rename_input_box.topleft = (groups_rect.x + 10, y_pos - 5)
+                pygame.draw.rect(screen, (50, 50, 50), group_rename_input_box)
+                draw_text(group_rename_text, group_rename_input_box.x + 5, group_rename_input_box.y + 5, screen)
+            else:
+                draw_text(f"- {g['name']}", groups_rect.x + 10, y_pos, screen)
+
+        if clicked_this_frame and not spriteselected and not groupselected:
+            for i, g in enumerate(groups):
+                y_pos = 60 + i * 20
+                name_rect = pygame.Rect(groups_rect.x + 10, y_pos, 180, 20)
+                if name_rect.collidepoint(mouse_pos):
+                    selected_group_index = i
+                    groupselected = True
+                    spriteselected = False
+                    group_rename_text = groups[i]['name']
+                    break
+
+        # Inspector
+        pygame.draw.rect(screen, PANEL_COLOR, inspector_rect)
+        draw_text("Inspector".center(20), inspector_rect.x + 10, inspector_rect.y + 10, screen)
+
         if spriteselected:
             try:
-                draw_text(f"Name: {sprites[selected_sprite_index]['name']}", inspector_rect.x + 10 + len(sprites[selected_sprite_index]['name']), inspector_rect.y + 60, screen)
-                draw_text(f"Data: \n{insert_newlines(str(sprites[selected_sprite_index]['data']), 15).replace(',', ',\n ').replace('{', '{\n  ')}", inspector_rect.x + 10 + len(sprites[selected_sprite_index]['data']), inspector_rect.y + 90, screen)
+                draw_text(f"Name: {sprites[selected_sprite_index]['name']}", inspector_rect.x + 10, inspector_rect.y + 60, screen)
+                draw_text(f"Data: \n{insert_newlines(str(sprites[selected_sprite_index]['data']), 15).replace(',', ',\n ').replace('{', '{\n  ')}", inspector_rect.x + 10, inspector_rect.y + 90, screen)
             except IndexError:
                 spriteselected = False
                 continue # User deleted sprite while viewing it
+        elif groupselected:
+            try:
+                group = groups[selected_group_index]
+                draw_text(f"Name: {group['name']}", inspector_rect.x + 10, inspector_rect.y + 60, screen)
+                draw_text(f"Sprites:\n" + ", ".join(group['sprites']), inspector_rect.x + 10, inspector_rect.y + 90, screen)
+                draw_text("Ctrl+A: add sprite\nCtrl+Z: remove sprite", inspector_rect.x + 10, inspector_rect.y + 150, screen, ACCENT_COLOR)
+            except IndexError:
+                groupselected = False
+
         # Draw buttons and handle clicks
         hovered_sprite = new_sprite_btn.collidepoint(mouse_pos)
         draw_button(new_sprite_btn, "Add New Sprite", hovered_sprite)
         if hovered_sprite and clicked_this_frame:
             newsprite()
+
+        hovered_group = new_group_btn.collidepoint(mouse_pos)
+        draw_button(new_group_btn, "Add New Group", hovered_group)
+        if hovered_group and clicked_this_frame:
+            newgroup()
 
         hovered_save = save_btn.collidepoint(mouse_pos)
         draw_button(save_btn, "Save Project", hovered_save)
