@@ -1,9 +1,22 @@
 import pygame
 import os
 import sys
+from typing import Final
 
 # Initialize Pygame
 pygame.init()
+
+# Annotations for type hints
+WIDTH: Final[int]
+HEIGHT: Final[int]
+FPS: Final[int]
+BG_COLOR: Final[tuple[int, int, int]]
+PANEL_COLOR: Final[tuple[int, int, int]]
+BUTTON_COLOR: Final[tuple[int, int, int]]
+BUTTON_HOVER_COLOR: Final[tuple[int, int, int]]
+TEXT_COLOR: Final[tuple[int, int, int]]
+ACCENT_COLOR: Final[tuple[int, int, int]]
+FONT: Final[pygame.font.Font]
 
 # Constants
 WIDTH, HEIGHT = 960, 600
@@ -26,6 +39,43 @@ clock = pygame.time.Clock()
 MENU = "menu"
 EDITOR = "editor"
 state = MENU
+
+# Banned
+banned_kwords: Final[list[str]] = [
+    "abs", "aiter", "all", "any", "anext", "ascii", "bin", "bool", "breakpoint",
+    "bytearray", "bytes", "callable", "chr", "classmethod", "compile", "complex",
+    "delattr", "dict", "dir", "divmod", "enumerate", "eval", "exec", "filter",
+    "float", "format", "frozenset", "getattr", "globals", "hasattr", "hash",
+    "help", "hex", "id", "input", "int", "isinstance", "issubclass", "iter",
+    "len", "list", "locals", "map", "max", "memoryview", "min", "next", "object",
+    "oct", "open", "ord", "pow", "print", "property", "range", "repr", "reversed",
+    "round", "set", "setattr", "slice", "sorted", "staticmethod", "str", "sum",
+    "super", "tuple", "type", "vars", "zip", "__import__",
+
+    "BaseException", "SystemExit", "KeyboardInterrupt", "GeneratorExit",
+    "Exception", "StopIteration", "StopAsyncIteration", "ArithmeticError",
+    "FloatingPointError", "OverflowError", "ZeroDivisionError", "AssertionError",
+    "AttributeError", "BufferError", "EOFError", "ImportError", "ModuleNotFoundError",
+    "LookupError", "IndexError", "KeyError", "MemoryError", "NameError",
+    "UnboundLocalError", "OSError", "BlockingIOError", "ChildProcessError",
+    "ConnectionError", "BrokenPipeError", "ConnectionAbortedError",
+    "ConnectionRefusedError", "ConnectionResetError", "FileExistsError",
+    "FileNotFoundError", "InterruptedError", "IsADirectoryError",
+    "NotADirectoryError", "PermissionError", "ProcessLookupError", "TimeoutError",
+    "ReferenceError", "RuntimeError", "NotImplementedError", "RecursionError",
+    "SyntaxError", "IndentationError", "TabError", "SystemError", "TypeError",
+    "ValueError", "UnicodeError", "UnicodeDecodeError", "UnicodeEncodeError",
+    "UnicodeTranslateError",
+
+    "Warning", "DeprecationWarning", "PendingDeprecationWarning",
+    "RuntimeWarning", "SyntaxWarning", "UserWarning", "FutureWarning",
+    "ImportWarning", "UnicodeWarning", "BytesWarning", "ResourceWarning",
+
+    "True", "False", "None", "Ellipsis", "NotImplemented"
+]
+# Ensure banned keywords are not used as sprite or group names
+
+
 
 # Project state
 project_name = ""
@@ -64,6 +114,29 @@ adding_to_group = False
 removing_from_group = False
 
 # Helper functions
+def remove_non_ascii(text):
+    """
+    Removes all non-ASCII characters from a string.
+
+    Args:
+        text (str): The input string.
+
+    Returns:
+        str: The string with non-ASCII characters removed.
+    """
+    return text.encode('ascii', 'ignore').decode('ascii')    
+
+def filter(text):
+    """
+    Filters a string to remove non-ASCII characters and certain symbols.
+
+    Args:
+        text (str): The input string.
+
+    Returns:
+        str: The filtered string.
+    """
+    return text.replace(' ', '_').replace(';', '').replace('"', '').replace("'", "").replace(":", "_").replace("/", "_").replace("\\", "_").replace("`", "_").replace("?", "_").replace("<", "_").replace(">", "_").replace("|", "_")
 def draw_text(text, x, y, surface, color=TEXT_COLOR):
     lines = text.splitlines()
     for i, line in enumerate(lines):
@@ -75,18 +148,38 @@ def draw_button(rect, text, hovered):
     pygame.draw.rect(screen, color, rect, border_radius=8)
     draw_text(text, rect.x + 20, rect.y + (rect.height - FONT.get_height()) // 2, screen, ACCENT_COLOR if hovered else TEXT_COLOR)
 
+def is_int(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+
 def write_project_file():
     if not project_name.strip():
         return
-    filename = f"{project_name}.py"
+    filename = filter(remove_non_ascii(f"{project_name}.py"))
     with open(filename, "w") as f:
+        f.write("# -*- coding: utf-8 -*-\n\n")
         f.write("from gamebro import Sprite, SpriteGroup\n\n")
-        f.write(f"# Project: {project_name}\n")
+        f.write(f"# Project: {filter(project_name)}\n")
+        f.write("# Created by GameBro Studio\n")
         for sprite in sprites:
-            f.write(f"{sprite['name']} = Sprite(customdata={sprite['data']}, name=\"{sprite['name']}\")\n")
+            spritetowrite: str = filter(sprite['name'])
+            if is_int(spritetowrite) or spritetowrite in ["Sprite", "SpriteGroup", *banned_kwords]:
+                spritetowrite = f"Sprite_{spritetowrite}"
+            f.write(f"{spritetowrite}: Sprite = Sprite(customdata={sprite['data']}, name=\"{sprite['name'].replace(' ', '_').replace(';', '').replace('"', '')}\")\n")
         for group in groups:
-            members = ', '.join(group['sprites'])
-            f.write(f"{group['name']} = SpriteGroup({members})\n")
+            group_name = filter(group['name'])
+            if is_int(group_name) or group_name in ["Sprite", "SpriteGroup", *banned_kwords] or group_name in [sprite['name'] for sprite in sprites]:
+                group_name = f"Group_{group_name}"
+            members = ','.join(
+            filter(s).replace(' ', '_').replace(';', '').replace('"', '')
+            if not (is_int(filter(s)) or filter(s) in ["Sprite", "SpriteGroup", *banned_kwords])
+            else f"Sprite_{filter(s)}"
+            for s in group['sprites']
+            )
+            f.write(f"{group_name}: SpriteGroup = SpriteGroup({members})\n")
 
 def insert_newlines(text, max_chars):
     return '\n'.join(text[i:i+max_chars] for i in range(0, len(text), max_chars))
@@ -108,7 +201,8 @@ def get_user_input(prompt, initial=""):
                 elif event.key == pygame.K_ESCAPE:
                     return None
                 else:
-                    text += event.unicode
+                    if event.unicode.isprintable():
+                        text += event.unicode # Allow printable characters only
         screen.fill(BG_COLOR)
         draw_text(prompt, 10, 10, screen)
         draw_text(text, 10, 40, screen, ACCENT_COLOR)
@@ -118,7 +212,13 @@ def get_user_input(prompt, initial=""):
 
 def newsprite():
     if len(sprites) < 23:
-        sprites.append({"name": f"Sprite{len(sprites)}", "data": {"x": 0, "y": 0, "visible": True, "id": len(sprites)}})
+        name = get_user_input("Enter sprite name:")
+        if not name or not name.strip():
+            return
+        if any(s['name'] == name for s in sprites):
+            wait_for_keypress("Sprite name exists!")
+            return
+        sprites.append({"name": name, "data": {"x": 0, "y": 0, "visible": True, "id": len(sprites)}})
 
 def newgroup():
     name = get_user_input("Enter group name:")
@@ -210,7 +310,8 @@ while True:
             elif event.key == pygame.K_RETURN:
                 input_active = False
             else:
-                project_name += event.unicode
+                if event.unicode.isprintable():
+                    project_name += event.unicode
 
         if event.type == pygame.KEYDOWN and state == EDITOR:
             # Editor Keybinds
@@ -231,7 +332,7 @@ while True:
                     continue
             elif event.key == pygame.K_s and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 if project_name.strip() and state == EDITOR:
-                    write_project_file()                                
+                    write_project_file()
             elif event.key == pygame.K_n and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 newsprite()
             elif event.key == pygame.K_g and pygame.key.get_mods() & pygame.KMOD_CTRL:
