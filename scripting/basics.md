@@ -62,7 +62,7 @@ The current supported events (more coming later):
 
 * `"group-add"` — triggered when a sprite is added to a group
 * `"group-removed"` — triggered when a sprite is removed from a group
-* `"str-view"` — triggered when a sprite is viewed as a str
+* `"str-view"` — triggered when a sprite is viewed as a string
 
 ---
 
@@ -78,8 +78,3 @@ You can run them standalone or include them in a bigger Python game.
 * Add more events
 * Create timelines (coming soon)
 * Use the Gamebro GUI to visually edit, then **code like a beast**
-
----
-
-Made with 💙 by a **real dev** in Gamebro.
-
