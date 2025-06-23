@@ -460,15 +460,15 @@ while True:
                         wait_for_keypress("Cannot delete system key")
                         continue
                     del sprites[selected_sprite_index]['data'][keytodelete]
-                elif groupselected:
-                    delete_group(selected_group_index)
-                    groupselected = False
             elif event.key == pygame.K_x and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 if spriteselected:
                     sprite_name = sprites[selected_sprite_index]['name']
                     remove_sprite_from_all_groups(sprite_name)
                     del sprites[selected_sprite_index]
                     spriteselected = False
+                elif groupselected:
+                    delete_group(selected_group_index)
+                    groupselected = False
             elif event.key == pygame.K_a and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 if groupselected:
                     add_sprite_to_group(selected_group_index)
