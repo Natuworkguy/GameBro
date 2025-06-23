@@ -5,6 +5,7 @@ from typing import Final, Any
 import tkinter.filedialog as fd
 from tkinter import PhotoImage
 import tkinter as tk
+import _tkinter
 import json
 import random
 import math
@@ -41,8 +42,13 @@ FONT = pygame.font.SysFont("consolas", 20)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Gamebro Studio")
 pygame.display.set_icon(pygame.image.load(iconpath := os.path.join('assets', 'icon.png')))
-icon = PhotoImage(file=iconpath)
-root.iconphoto(False, icon)
+try:
+    icon = PhotoImage(file=iconpath)
+except _tkinter.TclError:
+    print(f"Error loading icon from {iconpath}. Ensure the file exists.")
+    icon = None
+if icon is not None:
+    root.iconphoto(False, icon)
 clock = pygame.time.Clock()
 
 # App states
@@ -232,7 +238,7 @@ def get_user_input(prompt, initial=""):
         clock.tick(FPS)
     return text
 
-def newsprite(data: dict[Any, Any] | None = None):
+def newsprite(data: dict[Any, Any] = None):
     if len(sprites) < 23:
         if data is None:
             name = get_user_input("Enter sprite name: ")
@@ -431,31 +437,28 @@ while True:
                 newgroup()
             elif event.key == pygame.K_k and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 if spriteselected:
-                    newkey: str = get_user_input("Enter the key for the new data: ")
+                    newkey: str = get_user_input("Enter the key for the data: ")
                     if newkey is None:
                         continue
-                    match newkey:
-                        case "name" | "data" | "visible" | "id":
-                            wait_for_keypress("Key unavailable")
-                            continue
+                    if newkey in ["name", "data", "id"]:
+                        wait_for_keypress("Key unavailable")
+                        continue
                     newval: str = get_user_input("Enter the value for the new key: ")
-                    match newval:
-                        case 'None':
-                            newval = None
-                        case 'False':
-                            newval = False
-                        case 'True':
-                            newval = True
+                    if newval == 'None':
+                        newval = None
+                    elif newval == 'False':
+                        newval = False
+                    elif newval == 'True':
+                        newval = True
                     sprites[selected_sprite_index]['data'][newkey] = newval
             elif event.key == pygame.K_d and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 if spriteselected:
                     keytodelete: str = get_user_input("Enter the key to delete: ")
                     if keytodelete is None:
                         continue
-                    match keytodelete:
-                        case "name" | "data" | "visible" | "id":
-                            wait_for_keypress("Cannot delete system key")
-                            continue
+                    if keytodelete in ["name", "data", "visible", "id"]:
+                        wait_for_keypress("Cannot delete system key")
+                        continue
                     del sprites[selected_sprite_index]['data'][keytodelete]
                 elif groupselected:
                     delete_group(selected_group_index)
