@@ -146,7 +146,7 @@ def filter(text):
     Returns:
         str: The filtered string.
     """
-    return text.replace(' ', '_').replace(';', '').replace('"', '').replace("'", "").replace(":", "_").replace("/", "_").replace("\\", "_").replace("`", "_").replace("?", "_").replace("<", "_").replace(">", "_").replace("|", "_").replace(".", "")
+    return text.replace(' ', '_').replace(';', '').replace('"', '').replace("'", "").replace(":", "_").replace("/", "_").replace("\\", "_").replace("`", "_").replace("?", "_").replace("<", "_").replace(">", "_").replace("|", "_")
 def draw_text(text, x, y, surface, color=TEXT_COLOR):
     lines = text.splitlines()
     for i, line in enumerate(lines):
@@ -165,6 +165,18 @@ def is_int(s):
     except ValueError:
         return False
 
+def cleanquotes(text: str) -> str:
+    """
+    Cleans quotes from a string by removing single and double quotes.
+    
+    Args:
+        text (str): The input string.
+        
+    Returns:
+        str: The cleaned string.
+    """
+    return text.replace("'", "").replace('"', "")
+
 def write_project_file():
     if not project_name.strip():
         return
@@ -178,13 +190,13 @@ def write_project_file():
             spritetowrite: str = filter(sprite['name'])
             if is_int(spritetowrite) or spritetowrite in ["Sprite", "SpriteGroup", *banned_kwords]:
                 spritetowrite = f"Sprite_{spritetowrite}"
-            f.write(f"{spritetowrite}: Sprite = Sprite(customdata={sprite['data']}, name=\"{sprite['name'].replace(' ', '_').replace(';', '').replace('"', '')}\")\n")
+            f.write(f"{spritetowrite}: Sprite = Sprite(customdata={sprite['data']}, name=\"{cleanquotes(sprite['name'].replace(' ', '_').replace(';', ''))}\")\n")
         for group in groups:
             group_name = filter(group['name'])
             if is_int(group_name) or group_name in ["Sprite", "SpriteGroup", *banned_kwords] or group_name in [sprite['name'] for sprite in sprites]:
                 group_name = f"Group_{group_name}"
             members = ','.join(
-            filter(s).replace(' ', '_').replace(';', '').replace('"', '')
+            filter(s).replace(' ', '_').replace(';', '').replace('"', '').replace("'", "")
             if not (is_int(filter(s)) or filter(s) in ["Sprite", "SpriteGroup", *banned_kwords])
             else f"Sprite_{filter(s)}"
             for s in group['sprites']
@@ -278,9 +290,6 @@ def add_sprite_to_group(group_idx):
     prompt = "Add which sprite? " + ', '.join(names)
     name = get_user_input(prompt)
     if name in names:
-        if sprites[name]["data"]["rules"]["PreventAddingToGroup"]:
-            print(sprites[name])
-            return
         groups[group_idx]['sprites'].append(name)
     else:
         wait_for_keypress("Invalid sprite name!")
@@ -539,7 +548,8 @@ while True:
         if spriteselected:
             try:
                 draw_text(f"Name: {sprites[selected_sprite_index]['name']}", inspector_rect.x + 10, inspector_rect.y + 60, screen)
-                draw_text(f"Data: \n{insert_newlines(str(sprites[selected_sprite_index]['data']), 15).replace(',', ',\n ').replace('{', '{\n  ')}", inspector_rect.x + 10, inspector_rect.y + 90, screen)
+                data = insert_newlines(str(sprites[selected_sprite_index]['data']), 15).replace(',', ',\n ').replace('{', '{\n  ')
+                draw_text(f"Data: \n{data}", inspector_rect.x + 10, inspector_rect.y + 90, screen)
             except IndexError:
                 spriteselected = False
                 continue # User deleted sprite while viewing it
