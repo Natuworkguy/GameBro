@@ -1,7 +1,16 @@
 import pygame
 import os
 import sys
-from typing import Final
+from typing import Final, Any
+import tkinter.filedialog as fd
+from tkinter import PhotoImage
+import tkinter as tk
+import json
+import random
+import math
+
+root = tk.Tk()
+root.withdraw()
 
 # Initialize Pygame
 pygame.init()
@@ -17,7 +26,6 @@ BUTTON_HOVER_COLOR: Final[tuple[int, int, int]]
 TEXT_COLOR: Final[tuple[int, int, int]]
 ACCENT_COLOR: Final[tuple[int, int, int]]
 FONT: Final[pygame.font.Font]
-
 # Constants
 WIDTH, HEIGHT = 960, 600
 FPS = 60
@@ -32,7 +40,9 @@ FONT = pygame.font.SysFont("consolas", 20)
 # Create window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Gamebro Studio")
-pygame.display.set_icon(pygame.image.load(os.path.join('assets', 'icon.png')))
+pygame.display.set_icon(pygame.image.load(iconpath := os.path.join('assets', 'icon.png')))
+icon = PhotoImage(file=iconpath)
+root.iconphoto(False, icon)
 clock = pygame.time.Clock()
 
 # App states
@@ -136,7 +146,7 @@ def filter(text):
     Returns:
         str: The filtered string.
     """
-    return text.replace(' ', '_').replace(';', '').replace('"', '').replace("'", "").replace(":", "_").replace("/", "_").replace("\\", "_").replace("`", "_").replace("?", "_").replace("<", "_").replace(">", "_").replace("|", "_")
+    return text.replace(' ', '_').replace(';', '').replace('"', '').replace("'", "").replace(":", "_").replace("/", "_").replace("\\", "_").replace("`", "_").replace("?", "_").replace("<", "_").replace(">", "_").replace("|", "_").replace(".", "")
 def draw_text(text, x, y, surface, color=TEXT_COLOR):
     lines = text.splitlines()
     for i, line in enumerate(lines):
@@ -160,7 +170,7 @@ def write_project_file():
         return
     filename = filter(remove_non_ascii(f"{project_name}.py"))
     with open(filename, "w") as f:
-        f.write("# -*- coding: utf-8 -*-\n\n")
+        f.write("# -*- coding: utf-8 -*-\n")
         f.write("from gamebro import Sprite, SpriteGroup\n\n")
         f.write(f"# Project: {filter(project_name)}\n")
         f.write("# Created by GameBro Studio\n")
@@ -210,18 +220,26 @@ def get_user_input(prompt, initial=""):
         clock.tick(FPS)
     return text
 
-def newsprite():
+def newsprite(data: dict[Any, Any] | None = None):
     if len(sprites) < 23:
-        name = get_user_input("Enter sprite name: ")
-        if not name or not name.strip():
-            return
-        if any(s['name'] == name for s in sprites):
-            wait_for_keypress("Sprite name exists!")
+        if data is None:
+            name = get_user_input("Enter sprite name: ")
+            if not name or not name.strip():
+                return
+        else:
+            if "name" not in data or "data" not in data:
+                wait_for_keypress("Invalid JSON structure.")
+                return
+            name = data["name"]
+        if any(s['name'] == name or data[name] for s in sprites):
+            wait_for_keypress("Sprite name exists!" if data is None else "Sprite already exists!")
             return
         if is_int(name) or name in ["Sprite", "SpriteGroup", *banned_kwords] or name.startswith("Sprite_") or name.startswith("Group_"):
             wait_for_keypress("Invalid sprite name!")
             return
-        sprites.append({"name": name, "data": {"x": 0, "y": 0, "visible": True, "id": len(sprites)}})
+        if data is not None:
+            data["id"] = len(sprites)
+        sprites.append(data or {"name": name, "data": {"x": 0, "y": 0, "visible": True, "id": len(sprites)}})
 
 def newgroup():
     name = get_user_input("Enter group name: ")
@@ -260,6 +278,9 @@ def add_sprite_to_group(group_idx):
     prompt = "Add which sprite? " + ', '.join(names)
     name = get_user_input(prompt)
     if name in names:
+        if sprites[name]["data"]["rules"]["PreventAddingToGroup"]:
+            print(sprites[name])
+            return
         groups[group_idx]['sprites'].append(name)
     else:
         wait_for_keypress("Invalid sprite name!")
@@ -291,6 +312,52 @@ def remove_sprite_from_all_groups(sprite_name):
     for group in groups:
         if sprite_name in group['sprites']:
             group['sprites'].remove(sprite_name)
+
+def splash_screen() -> None:
+    font_size = 96
+    font = pygame.font.Font(None, 80)
+    start_time = pygame.time.get_ticks()
+    duration = random.randint(6000, 8000)
+    bar_width = 400
+    bar_height = 24
+    bar_color = (80, 200, 255)
+    bar_bg = (60, 60, 60)
+    while pygame.time.get_ticks() - start_time < duration:
+        screen.fill((30, 30, 30))
+        t = (pygame.time.get_ticks() - start_time) / duration
+        # Animate color
+        scale = 1.0
+        color = (
+            max(0, min(255, 102 + int(55 * math.sin(t * 2 * math.pi)))),
+            max(0, min(255, 0 + int(55 * math.sin(t * 3 * math.pi + 1)))),
+            153
+        )
+        text_surf = font.render("GameBro Studio", True, color)
+        w, h = text_surf.get_size()
+        text_surf = pygame.transform.smoothscale(
+            text_surf, (int(w * scale), int(h * scale))
+        )
+        screen.blit(
+            text_surf,
+            (
+                screen.get_width() // 2 - text_surf.get_width() // 2,
+                screen.get_height() // 2 - text_surf.get_height() // 2,
+            ),
+        )
+        # Draw loading bar background
+        bar_x = screen.get_width() // 2 - bar_width // 2
+        bar_y = screen.get_height() // 2 + h // 2 + 40
+        pygame.draw.rect(screen, bar_bg, (bar_x, bar_y, bar_width, bar_height), border_radius=8)
+        # Draw loading bar progress
+        progress = min(1.0, t)
+        pygame.draw.rect(screen, bar_color, (bar_x, bar_y, int(bar_width * progress), bar_height), border_radius=8)
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.time.wait(1000)
+                pygame.quit()
+                sys.exit()
+        clock.tick(60)
 
 # Main loop
 while True:
@@ -339,6 +406,16 @@ while True:
             elif event.key == pygame.K_s and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 if project_name.strip() and state == EDITOR:
                     write_project_file()
+            elif event.key == pygame.K_o and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                jsonspritefile: str = fd.askopenfilename(title="Open JSON sprite file", filetypes=[
+                    ('JSON File', '.json')
+                ])
+                if not jsonspritefile:
+                    continue
+                with open(jsonspritefile, 'r') as f:
+                    jsonspritedata: dict[Any, Any] = json.load(f)
+                    f.close()
+                newsprite(jsonspritedata)
             elif event.key == pygame.K_n and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 newsprite()
             elif event.key == pygame.K_g and pygame.key.get_mods() & pygame.KMOD_CTRL:
@@ -353,6 +430,13 @@ while True:
                             wait_for_keypress("Key unavailable")
                             continue
                     newval: str = get_user_input("Enter the value for the new key: ")
+                    match newval:
+                        case 'None':
+                            newval = None
+                        case 'False':
+                            newval = False
+                        case 'True':
+                            newval = True
                     sprites[selected_sprite_index]['data'][newkey] = newval
             elif event.key == pygame.K_d and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 if spriteselected:
@@ -391,6 +475,7 @@ while True:
         draw_button(new_project_btn, "Create New Project", hovered)
         if hovered and mouse_clicked:
             if project_name.strip():
+                splash_screen()
                 state = EDITOR
 
     elif state == EDITOR:
