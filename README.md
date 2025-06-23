@@ -53,6 +53,7 @@ That’s it. A clean GUI will launch. You can:
 - `Ctrl+X` — Delete Selected Sprite (also removes it from all groups)
 - `Ctrl+K` — Add Data Key to Selected Sprite
 - `Ctrl+D` — Delete Data Key from Selected Sprite
+- `Ctrl+O` — Add a Sprite from a JSON file
 - `R`      — Rename Selected Sprite (when a sprite is selected)
 - `C`      — Clear Selection
 
