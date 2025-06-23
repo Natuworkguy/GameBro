@@ -1,4 +1,4 @@
-from typing import Any, Self
+from typing import Any, Self, Callable
 import uuid
 from uuid import UUID
 
@@ -22,6 +22,7 @@ class Sprite:
                 description: Sprite name
                 type: str
         """
+        self.event_listeners: dict[str, Callable] = {}
         self.customdata: dict[Any] = customdata or {}
         self.id: UUID = uuid.uuid4()
         self.name: str = options.get("name", f"Sprite-{str(self.id)[:8]}")
@@ -29,8 +30,24 @@ class Sprite:
         """
         Developer friendly way to view the sprite
         """
+        if "str-view" in self.event_listeners:
+            self.event_listeners["str-view"](self)
         return f"<Sprite \"{self.name}\" with customdata {self.customdata}>"
+    def addeventlistener(self: Self, event: str) -> Callable[[Callable], Callable]:
+        """
+        Decorator to add an event listener to the sprite
 
+        args:
+            event:
+                type: str
+                description: Event name
+        """
+        def decorator(callback: Callable) -> Callable:
+            if not callable(callback):
+                raise EngineError("Callback must be a callable function.")
+            self.event_listeners[event] = callback
+            return callback
+        return decorator
 class SpriteGroup:
     def __init__(self: Self, *elements: Any) -> None:
         """
@@ -77,6 +94,8 @@ class SpriteGroup:
             self.elements.remove(sprite)
         except ValueError as e:
             raise EngineError("Value is not present in group.")
+        if "group-remove" in sprite.event_listeners:
+            sprite.event_listeners["group-remove"](sprite)
     def add(self: Self, sprite: Sprite) -> None:
         """
         Add an item from the group using a key
@@ -89,3 +108,5 @@ class SpriteGroup:
         if not isinstance(sprite, Sprite):
             raise EngineError("All elements in a group must be of type Sprite.")
         self.elements.append(sprite)
+        if "group-add" in sprite.event_listeners:
+            sprite.event_listeners["group-add"](sprite)
