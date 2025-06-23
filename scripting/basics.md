@@ -34,7 +34,7 @@ bro: Sprite = Sprite(name="Bro", customdata={})
 
 # Register an event listener for when this sprite is added to a group
 @bro.addeventlistener("group-add")
-def on_view(self: Self, group: SpriteGroup) -> None:
+def on_add(self: Self, group: SpriteGroup) -> None:
     print(f"{self.name} was added to a group!")
 
 # Create a group and add the sprite to it
