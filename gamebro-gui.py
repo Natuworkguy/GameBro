@@ -58,8 +58,11 @@ state = MENU
 
 # Banned
 banned_kwords: Final[list[str]] = [
+    # Python keywords
+    "and", "as", "assert", "async", "await", "break", "class", "continue",
     "abs", "aiter", "all", "any", "anext", "ascii", "bin", "bool", "breakpoint",
     "bytearray", "bytes", "callable", "chr", "classmethod", "compile", "complex",
+    "def", "del", "elif", "else", "except", "finally", "for", "from",
     "delattr", "dict", "dir", "divmod", "enumerate", "eval", "exec", "filter",
     "float", "format", "frozenset", "getattr", "globals", "hasattr", "hash",
     "help", "hex", "id", "input", "int", "isinstance", "issubclass", "iter",
@@ -67,7 +70,7 @@ banned_kwords: Final[list[str]] = [
     "oct", "open", "ord", "pow", "print", "property", "range", "repr", "reversed",
     "round", "set", "setattr", "slice", "sorted", "staticmethod", "str", "sum",
     "super", "tuple", "type", "vars", "zip", "__import__",
-
+    # Python built-in exceptions
     "BaseException", "SystemExit", "KeyboardInterrupt", "GeneratorExit",
     "Exception", "StopIteration", "StopAsyncIteration", "ArithmeticError",
     "FloatingPointError", "OverflowError", "ZeroDivisionError", "AssertionError",
@@ -82,11 +85,11 @@ banned_kwords: Final[list[str]] = [
     "SyntaxError", "IndentationError", "TabError", "SystemError", "TypeError",
     "ValueError", "UnicodeError", "UnicodeDecodeError", "UnicodeEncodeError",
     "UnicodeTranslateError",
-
+    # Python warnings
     "Warning", "DeprecationWarning", "PendingDeprecationWarning",
     "RuntimeWarning", "SyntaxWarning", "UserWarning", "FutureWarning",
     "ImportWarning", "UnicodeWarning", "BytesWarning", "ResourceWarning",
-
+    # Other common Python terms
     "True", "False", "None", "Ellipsis", "NotImplemented"
 ]
 # Ensure banned keywords are not used as sprite or group names
@@ -202,10 +205,10 @@ def write_project_file():
             if is_int(group_name) or group_name in ["Sprite", "SpriteGroup", *banned_kwords] or group_name in [sprite['name'] for sprite in sprites]:
                 group_name = f"Group_{group_name}"
             members = ','.join(
-            filter(s).replace(' ', '_').replace(';', '').replace('"', '').replace("'", "")
-            if not (is_int(filter(s)) or filter(s) in ["Sprite", "SpriteGroup", *banned_kwords])
-            else f"Sprite_{filter(s)}"
-            for s in group['sprites']
+                filter(s).replace(' ', '_').replace(';', '').replace('"', '').replace("'", "")
+                if not (is_int(filter(s)) or filter(s) in ["Sprite", "SpriteGroup", *banned_kwords])
+                else f"Sprite_{filter(s)}"
+                for s in group['sprites']
             )
             f.write(f"{group_name}: SpriteGroup = SpriteGroup({members})\n")
 
@@ -427,9 +430,23 @@ while True:
                 ])
                 if not jsonspritefile:
                     continue
+            
                 with open(jsonspritefile, 'r') as f:
                     jsonspritedata: dict[Any, Any] = json.load(f)
-                    f.close()
+            
+                # Validate display color
+                if "display_color" in jsonspritedata:
+                    if len(jsonspritedata["display_color"]) != 3:
+                        wait_for_keypress("Invalid display color length in JSON data.")
+                        continue
+                    valid = True
+                    for value in jsonspritedata["display_color"]:
+                        if not isinstance(value, int) or not (0 <= value <= 255):
+                            wait_for_keypress("Invalid display color in JSON data.")
+                            valid = False
+                            break
+                    if not valid:
+                        continue  # Skip adding sprite if color is invalid
                 newsprite(jsonspritedata)
             elif event.key == pygame.K_n and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 newsprite()
@@ -504,7 +521,7 @@ while True:
                 pygame.draw.rect(screen, (50, 50, 50), rename_input_box)
                 draw_text(rename_text, rename_input_box.x + 5, rename_input_box.y + 5, screen)
             else:
-                draw_text(f"- {s['name']}", 10, y_pos, screen)
+                draw_text(f"- {s['name']}", 10, y_pos, screen, s.get('display_color', TEXT_COLOR))
 
         # Detect clicks on sprite names to start renaming
         clicked_this_frame = mouse_clicked
