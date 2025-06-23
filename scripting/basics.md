@@ -61,6 +61,8 @@ player = Sprite(name="Player", customdata={"x": 0, "y": 0, "health": 100})
 The current supported events (more coming later):
 
 * `"group-add"` — triggered when a sprite is added to a group
+* `"group-removed"` — triggered when a sprite is removed from a group
+* `"str-view"` — triggered when a sprite is viewed as a str
 
 ---
 
