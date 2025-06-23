@@ -1,4 +1,5 @@
 [![Gamebro Logo](assets/icon.png)](https://github.com/Natuworkguy/GameBro/)
+[![Created by Natuworkguy](http://img.shields.io/badge/Created%20by-Natuworkguy-blue)](https://github.com/Natuworkguy/)
 # Gamebro Studio
 
 **Gamebro** is a retro-inspired game engine GUI built with Python and Pygame — a twist on the legendary Gameboy, but made for building 2D games with style, ease, and a ton of custom potential.
