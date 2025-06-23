@@ -152,7 +152,7 @@ def filter(text):
     Returns:
         str: The filtered string.
     """
-    return text.replace(' ', '_').replace(';', '').replace('"', '').replace("'", "").replace(":", "_").replace("/", "_").replace("\\", "_").replace("`", "_").replace("?", "_").replace("<", "_").replace(">", "_").replace("|", "_")
+    return text.replace(' ', '_').replace(';', '').replace('"', '').replace("'", "").replace(":", "_").replace("/", "_").replace("\\", "_").replace("`", "_").replace("?", "_").replace("<", "_").replace(">", "_").replace("|", "_").replace("!", "_")
 def draw_text(text, x, y, surface, color=TEXT_COLOR):
     lines = text.splitlines()
     for i, line in enumerate(lines):
