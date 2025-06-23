@@ -60,7 +60,7 @@ That’s it. A clean GUI will launch. You can:
 
 **Groups:**
 - `Ctrl+G` — Add New Group
-- `Ctrl+D` — Delete Selected Group (when a group is selected)
+- `Ctrl+X` — Delete Selected Group (when a group is selected)
 - `Ctrl+A` — Add Sprite to Selected Group
 - `Ctrl+Z` — Remove Sprite from Selected Group
 - `R`      — Rename Selected Group (when a group is selected)
