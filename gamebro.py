@@ -95,7 +95,7 @@ class SpriteGroup:
         except ValueError as e:
             raise EngineError("Value is not present in group.")
         if "group-remove" in sprite.event_listeners:
-            sprite.event_listeners["group-remove"](sprite)
+            sprite.event_listeners["group-remove"](sprite, self)
     def add(self: Self, sprite: Sprite) -> None:
         """
         Add an item from the group using a key
@@ -109,4 +109,4 @@ class SpriteGroup:
             raise EngineError("All elements in a group must be of type Sprite.")
         self.elements.append(sprite)
         if "group-add" in sprite.event_listeners:
-            sprite.event_listeners["group-add"](sprite)
+            sprite.event_listeners["group-add"](sprite, self)
