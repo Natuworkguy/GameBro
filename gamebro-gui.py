@@ -9,6 +9,7 @@ import _tkinter
 import json
 import random
 import math
+import templates
 
 root = tk.Tk()
 root.withdraw()
@@ -441,12 +442,19 @@ while True:
                         continue
                     valid = True
                     for value in jsonspritedata["display_color"]:
-                        if not isinstance(value, int) or not (0 <= value <= 255):
+                        if not isinstance(value, (int, float)) or value < 0 or value > 255:
                             wait_for_keypress("Invalid display color in JSON data.")
                             valid = False
                             break
                     if not valid:
                         continue  # Skip adding sprite if color is invalid
+                if "template" in jsonspritedata:
+                    if jsonspritedata["template"] in templates.all:
+                        for key, value in templates.all[jsonspritedata["template"]].items():
+                            jsonspritedata[key] = value
+                    else:
+                        wait_for_keypress(f"Template '{jsonspritedata['template']}' not found.")
+                        continue
                 newsprite(jsonspritedata)
             elif event.key == pygame.K_n and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 newsprite()
