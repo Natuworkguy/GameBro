@@ -253,8 +253,8 @@ def newsprite(data: dict[Any, Any] = None):
                 wait_for_keypress("Invalid JSON structure.")
                 return
             name = data["name"]
-        if data is not None and any(s['name'] == name or data[name] for s in sprites):
-            wait_for_keypress("Sprite name exists!" if data is None else "Sprite already exists!")
+        if data is not None and any(s['name'] == name for s in sprites):
+            wait_for_keypress("Sprite already exists!")
             return
         if is_int(name) or name in ["Sprite", "SpriteGroup", *banned_kwords] or name.startswith("Sprite_") or name.startswith("Group_"):
             wait_for_keypress("Invalid sprite name!")
