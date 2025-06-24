@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=content_copy" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <title>GameBro Studio</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Consolas, monospace;
+      background: #141414;
+      color: #fff;
+      text-align: center;
+      animation: fadeIn 1s ease-in;
+    }
+    header {
+      background: #1f1f1f;
+      padding: 2rem 1rem;
+      border-bottom: 2px solid #00c8ff;
+    }
+    header img {
+      width: 80px;
+      height: 80px;
+    }
+    h1 {
+      margin: 0.5rem 0 0.2rem;
+      font-size: 2rem;
+      color: #00c8ff;
+    }
+    p {
+      margin: 0.2rem 0 1rem;
+      color: #ccc;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background: #00c8ff;
+      color: #000;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: transform 0.2s ease;
+      align-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+    }
+    .copy-btn {
+      background: #222;
+      color: #00c8ff;
+      border: 1px solid #00c8ff;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+    }
+    .copy-btn:hover {
+      background: #00c8ff;
+      color: #000;
+    }
+    section {
+      padding: 2rem 1rem;
+      border-bottom: 1px solid #333;
+    }
+    h2 {
+      color: #00c8ff;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin: 0.5rem 0;
+    }
+    code, pre {
+      background: #1e1e1e;
+      color: #00ffcc;
+      padding: 1rem;
+      display: block;
+      overflow-x: auto;
+      border-radius: 6px;
+      text-align: left;
+      position: relative;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      background: #1f1f1f;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <header class="animate__animated animate__slideInDown">
+    <img src="https://raw.githubusercontent.com/Natuworkguy/GameBro/main/assets/icon.png" alt="GameBro logo" class="animate__animated animate__rotateIn" />
+    <h1>🎮 GameBro Studio</h1>
+    <p>The pixel-perfect code-first game editor made for devs who get it.</p>
+    <a href="#download" class="btn animate__animated animate__pulse animate__infinite">Download Now</a>
+  </header>
+
+  <section id="features" class="animate__animated animate__fadeInUp scroll-fade">
+    <h2>🔥 Features</h2>
+    <ul>
+      <li>🎨 Visual Sprite Editor with JSON power-ups</li>
+      <li>🧠 Custom data for real dev logic</li>
+      <li>🧩 SpriteGroups to keep things neat</li>
+      <li>📦 Export as Python + Pygame</li>
+      <li>🎛️ Ctrl-powered keybinds for speed</li>
+    </ul>
+  </section>
+
+  <section id="examples" class="animate__animated animate__fadeInUp scroll-fade">
+    <h2>📁 What It Exports</h2>
+    <pre><code id="code-export"># -*- coding: utf-8 -*-
+from gamebro import Sprite, SpriteGroup
+
+# Project: s
+# Created by GameBro Studio
+EvilBoss: Sprite = Sprite(customdata={'hp': 3000, 'attack': 'laser'}, name="EvilBoss")
+</code><button class="copy-btn" onclick="copyCode('code-export')">
+      <span class="material-symbols-outlined">
+        content_copy
+      </span>
+    </button></pre>
+  </section>
+
+  <section id="json" class="animate__animated animate__fadeInUp scroll-fade">
+    <h2>🧾 JSON Sprites</h2>
+    <p>Make sprites like mods using a JSON file:</p>
+    <pre><code id="code-json">{
+  "name": "EvilBoss",
+  "template": "boss",
+  "data": {
+    "hp": 3000,
+    "attack": "laser"
+  },
+  "display_color": [255, 0, 0]
+}</code><button class="copy-btn" onclick="copyCode('code-json')">
+      <span class="material-symbols-outlined">
+        content_copy
+      </span>
+    </button></pre>
+    <p><em>Templates override values in the file (like setting the name color).</em></p>
+  </section>
+
+  <section id="download" class="animate__animated animate__fadeInUp scroll-fade">
+    <h2>⬇️ Download</h2>
+    <a href="https://github.com/Natuworkguy/GameBro" class="btn">Visit GitHub</a>
+    <a href="https://github.com/Natuworkguy/GameBro/archive/refs/heads/main.zip" class="btn">Download ZIP</a>
+  </section>
+
+  <footer>
+    <p>🛠️ Built with love by Natuworkguy</p>
+  </footer>
+
+  <script>
+    function copyCode(id) {
+      const code = document.getElementById(id);
+      const text = code.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Copied to clipboard!");
+      }).catch(err => {
+        console.error('Copy failed', err);
+        alert("Press Ctrl+C to copy manually.");
+      });
+    }
+
+    const faders = document.querySelectorAll('.scroll-fade');
+    const options = {
+      threshold: 0.1
+    };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate__fadeInUp');
+        }
+      });
+    }, options);
+    faders.forEach(fader => observer.observe(fader));
+  </script>
+</body>
+</html>
