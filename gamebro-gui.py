@@ -433,7 +433,13 @@ while True:
                     continue
             
                 with open(jsonspritefile, 'r') as f:
-                    jsonspritedata: dict[Any, Any] = json.load(f)
+                    try:
+                        jsonspritedata: dict[Any, Any] = json.load(f)
+                    except json.JSONDecodeError as e:
+                        f.close()
+                        wait_for_keypress(f"Invalid JSON file: {e}")
+                        continue
+                    f.close()
             
                 # Validate display color
                 if "display_color" in jsonspritedata:
