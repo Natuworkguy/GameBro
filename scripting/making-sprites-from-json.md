@@ -39,8 +39,13 @@ More templates will be added in future updates!
 
 ```json
 {
+  "template": "boss",
   "name": "FinalBoss",
-  "template": "boss"
+  "data": {
+    "x": 0,
+    "y": 0,
+    "visible": true
+  }
 }
 ```
 
