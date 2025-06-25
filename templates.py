@@ -1,4 +1,4 @@
-all: dict[str, dict[str, str | int | float | bool]] = {
+all = {
     "boss": {
         "display_color": "red",
     }
