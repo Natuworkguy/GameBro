@@ -42,7 +42,11 @@ FONT = pygame.font.SysFont("consolas", 20)
 # Create window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Gamebro Studio")
-pygame.display.set_icon(pygame.image.load(iconpath := os.path.join('assets', 'icon.png')))
+try:
+    pygame.display.set_icon(pygame.image.load(iconpath := os.path.join('assets', 'icon.png')))
+except (pygame.error, FileNotFoundError):
+    print(f"Error loading icon. Ensure the file exists.")
+    sys.exit()
 try:
     icon = PhotoImage(file=iconpath)
 except _tkinter.TclError:
