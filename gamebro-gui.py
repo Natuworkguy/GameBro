@@ -42,11 +42,7 @@ FONT = pygame.font.SysFont("consolas", 20)
 # Create window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Gamebro Studio")
-try:
-    pygame.display.set_icon(pygame.image.load(iconpath := os.path.join('assets', 'icon.png')))
-except (pygame.error, FileNotFoundError):
-    print(f"Error loading icon. Ensure the file exists.")
-    sys.exit()
+pygame.display.set_icon(pygame.image.load(iconpath := os.path.join('assets', 'icon.png')))
 try:
     icon = PhotoImage(file=iconpath)
 except _tkinter.TclError:
@@ -148,7 +144,9 @@ def remove_non_ascii(text):
     Returns:
         str: The string with non-ASCII characters removed.
     """
-    return text.encode('ascii', 'ignore').decode('ascii')    
+    return text\
+        .encode('ascii', 'ignore')\
+        .decode('ascii')    
 
 def filter(text):
     """
@@ -160,7 +158,21 @@ def filter(text):
     Returns:
         str: The filtered string.
     """
-    return text.replace(' ', '_').replace(';', '').replace('"', '').replace("'", "").replace(":", "_").replace("/", "_").replace("\\", "_").replace("`", "_").replace("?", "_").replace("<", "_").replace(">", "_").replace("|", "_").replace("!", "_")
+    return text\
+        .replace(' ', '_')\
+        .replace(';', '')\
+        .replace('"', '')\
+        .replace("'", "")\
+        .replace(":", "_")\
+        .replace("/", "_")\
+        .replace("\\", "_")\
+        .replace("`", "_")\
+        .replace("?", "_")\
+        .replace("<", "_")\
+        .replace(">", "_")\
+        .replace("|", "_")\
+        .replace("!", "_")\
+        .replace(',', '_')
 def draw_text(text, x, y, surface, color=TEXT_COLOR):
     lines = text.splitlines()
     for i, line in enumerate(lines):
