@@ -22,6 +22,10 @@ class Sprite:
                 description: Sprite name
                 type: str
         """
+        if customdata is None:
+            customdata = {}
+        if not isinstance(customdata, dict):
+            raise EngineError("Custom data must be a dictionary.")
         self.event_listeners: dict[str, Callable] = {}
         self.customdata: dict[Any] = customdata or {}
         self.id: UUID = uuid.uuid4()
