@@ -83,7 +83,7 @@ That’s it. A clean GUI will launch. You can:
 
 Here's what a saved project file might look like:
 
-See [this document](https://natuworkguy.github.io/GameBro/#what-it-exports).
+See [this document](https://natuworkguy.github.io/GameBro/#code-export).
 
 ---
 
