@@ -511,6 +511,11 @@ while True:
                         wait_for_keypress("Key unavailable")
                         continue
                     newval: str = get_user_input("Enter the value for the new key: ")
+                    if newkey == "x" or newkey == "y":
+                        if is_int(newval):
+                            newval = int(newval)
+                        else:
+                            wait_for_keypress("X and Y elements must be a valid int")
                     if newval == 'None':
                         newval = None
                     elif newval == 'False':
