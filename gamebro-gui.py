@@ -9,6 +9,8 @@ import _tkinter
 import json
 import random
 import math
+from typing import TextIO
+
 import templates
 
 root = tk.Tk()
@@ -38,6 +40,7 @@ BUTTON_HOVER_COLOR = (90, 90, 90)
 TEXT_COLOR = (255, 255, 255)
 ACCENT_COLOR = (0, 200, 255)
 FONT = pygame.font.SysFont("consolas", 20)
+f: TextIO
 
 # Create window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -144,9 +147,7 @@ def remove_non_ascii(text):
     Returns:
         str: The string with non-ASCII characters removed.
     """
-    return text\
-        .encode('ascii', 'ignore')\
-        .decode('ascii')    
+    return text.encode('ascii', 'ignore').decode('ascii')    
 
 def filter(text):
     """
@@ -158,21 +159,7 @@ def filter(text):
     Returns:
         str: The filtered string.
     """
-    return text\
-        .replace(' ', '_')\
-        .replace(';', '')\
-        .replace('"', '')\
-        .replace("'", "")\
-        .replace(":", "_")\
-        .replace("/", "_")\
-        .replace("\\", "_")\
-        .replace("`", "_")\
-        .replace("?", "_")\
-        .replace("<", "_")\
-        .replace(">", "_")\
-        .replace("|", "_")\
-        .replace("!", "_")\
-        .replace(',', '_')
+    return text.replace(' ', '_').replace(';', '').replace('"', '').replace("'", "").replace(":", "_").replace("/", "_").replace("\\", "_").replace("`", "_").replace("?", "_").replace("<", "_").replace(">", "_").replace("|", "_").replace("!", "_")
 def draw_text(text, x, y, surface, color=TEXT_COLOR):
     lines = text.splitlines()
     for i, line in enumerate(lines):
@@ -209,9 +196,14 @@ def write_project_file():
     filename = filter(remove_non_ascii(f"{project_name}.py"))
     with open(filename, "w") as f:
         f.write("# -*- coding: utf-8 -*-\n")
-        f.write("from gamebro import Sprite, SpriteGroup\n\n")
+        f.write("from gamebro import Sprite, SpriteGroup\n")
+        f.write("from ursina import *\n")
+        f.write("import sys\n")
+        f.write("from ursina.prefabs.first_person_controller import FirstPersonController\n\n")
         f.write(f"# Project: {filter(project_name)}\n")
-        f.write("# Created by GameBro Studio\n")
+        f.write("# Created by GameBro Studio\n\n")
+        f.write("app = Ursina()\n")
+        f.write("player = FirstPersonController()\n\n")
         for sprite in sprites:
             spritetowrite: str = filter(sprite['name'])
             if is_int(spritetowrite) or spritetowrite in ["Sprite", "SpriteGroup", *banned_kwords]:
@@ -228,6 +220,11 @@ def write_project_file():
                 for s in group['sprites']
             )
             f.write(f"{group_name}: SpriteGroup = SpriteGroup({members})\n")
+        f.write("def input(key):\n")
+        f.write("    if key == \"escape\":\n")
+        f.write("        sys.exit()\n\n")
+        f.write("app.run()")
+        f.close()
 
 def insert_newlines(text, max_chars):
     return '\n'.join(text[i:i+max_chars] for i in range(0, len(text), max_chars))
@@ -449,13 +446,7 @@ while True:
                     continue
             
                 with open(jsonspritefile, 'r') as f:
-                    try:
-                        jsonspritedata: dict[Any, Any] = json.load(f)
-                    except json.JSONDecodeError as e:
-                        f.close()
-                        wait_for_keypress(f"Invalid JSON file: {e}")
-                        continue
-                    f.close()
+                    jsonspritedata: dict[Any, Any] = json.load(f)
             
                 # Validate display color
                 if "display_color" in jsonspritedata:
