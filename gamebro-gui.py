@@ -202,8 +202,11 @@ def write_project_file():
         f.write("from ursina.prefabs.first_person_controller import FirstPersonController\n\n")
         f.write(f"# Project: {filter(project_name)}\n")
         f.write("# Created by GameBro Studio\n\n")
-        f.write("app = Ursina()\n")
-        f.write("player = FirstPersonController()\n\n")
+        f.write("app: Ursina = Ursina()\n")
+        f.write(f"window.title = \"{filter(remove_non_ascii(f"{project_name}"))}\"\n")
+        f.write("window.exit_button.visible = False\n")
+        f.write("player: FirstPersonController = FirstPersonController(y=1)\n")
+        f.write("player.gravity = 1\n\n")
         for sprite in sprites:
             spritetowrite: str = filter(sprite['name'])
             if is_int(spritetowrite) or spritetowrite in ["Sprite", "SpriteGroup", *banned_kwords]:
@@ -220,9 +223,11 @@ def write_project_file():
                 for s in group['sprites']
             )
             f.write(f"{group_name}: SpriteGroup = SpriteGroup({members})\n")
-        f.write("def input(key):\n")
+        f.write("def input(key: str) -> None:\n")
         f.write("    if key == \"escape\":\n")
         f.write("        sys.exit()\n\n")
+        f.write("def update() -> None:\n")
+        f.write("    mouse.position = Vec2(0, 0)\n\n")
         f.write("app.run()")
         f.close()
 
