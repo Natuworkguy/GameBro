@@ -28,6 +28,10 @@ More templates will be added in future updates!
 {
   "name": "Enemy1",
   "data": {
+    "x": 0,
+    "y": 0,
+    "visible": true,
+    "hitbox": true,
     "health": 50,
     "speed": 2.5
   },
