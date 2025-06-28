@@ -9,7 +9,7 @@ import _tkinter
 import json
 import random
 import math
-from typing import TextIO
+from typing import TextIO, Optional
 
 import templates
 
@@ -191,7 +191,7 @@ def cleanquotes(text: str) -> str:
     """
     return text.replace("'", "").replace('"', "")
 
-def write_project_file():
+def write_project_file() -> None:
     if not project_name.strip():
         return
 
@@ -258,7 +258,7 @@ def write_project_file():
 def insert_newlines(text, max_chars):
     return '\n'.join(text[i:i+max_chars] for i in range(0, len(text), max_chars))
 
-def get_user_input(prompt, initial=""):
+def get_user_input(prompt, initial="") -> Optional[str]:
     """Capture user keyboard input until Enter is pressed."""
     text = initial
     active = True
@@ -284,7 +284,7 @@ def get_user_input(prompt, initial=""):
         clock.tick(FPS)
     return text
 
-def newsprite(data: dict[Any, Any] = None):
+def newsprite(data: Optional[dict[Any, Any]] = None):
     if len(sprites) < 23:
         if data is None:
             name = get_user_input("Enter sprite name: ")
@@ -316,7 +316,7 @@ def newgroup():
             return
         groups.append({"name": name, "sprites": []})
 
-def wait_for_keypress(message: str):
+def wait_for_keypress(message: str) -> None:
     """Displays a message and waits for the user to press any key."""
     while True:
         screen.fill(BG_COLOR)
@@ -469,7 +469,8 @@ while True:
                     write_project_file()
             elif event.key == pygame.K_o and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 jsonspritefile: str = fd.askopenfilename(title="Open JSON sprite file", filetypes=[
-                    ('JSON File', '.json')
+                    ('JSON File', '.json'),
+                    ('JSON Sprite File', '.jsonsprite')
                 ])
                 if not jsonspritefile:
                     continue
