@@ -193,6 +193,7 @@ def cleanquotes(text: str) -> str:
 def write_project_file():
     if not project_name.strip():
         return
+
     filename = filter(remove_non_ascii(f"{project_name}.py"))
     with open(filename, "w") as f:
         f.write("# -*- coding: utf-8 -*-\n")
@@ -203,19 +204,28 @@ def write_project_file():
         f.write("from ursina.prefabs.first_person_controller import FirstPersonController\n\n")
         f.write(f"# Project: {filter(project_name)}\n")
         f.write("# Created by GameBro Studio\n\n")
-        f.write(f"app: Ursina = Ursina(title=\"{filter(remove_non_ascii(f"{project_name}"))}\")\n")
-        f.write(f"window.title = \"{filter(remove_non_ascii(f"{project_name}"))}\"\n")
+        f.write(f"app: Ursina = Ursina(title=\"{filter(remove_non_ascii(project_name))}\")\n")
+        f.write(f"window.title = \"{filter(remove_non_ascii(project_name))}\"\n")
         f.write("if os.path.exists(os.path.join(\"assets\", \"icon.ico\")):\n")
         f.write("    window.icon = os.path.join(\"assets\", \"icon.ico\")\n")
         f.write("window.exit_button.visible = False\n")
-        f.write("window.borderless = True\n")
-        f.write("player: FirstPersonController = FirstPersonController(y=1)\n")
+        f.write("window.borderless = True\n\n")
+
+        # Player above platform
+        f.write("player = FirstPersonController(position=(0, 5, 0))\n")
         f.write("player.gravity = 1\n\n")
+
+        # Ground platform
+        f.write("platform: Entity = Entity(model='cube', color=color.green, scale=(10, 1, 10), position=(0, 0, 0), collider='box')\n\n")
+
+        # Write sprites
         for sprite in sprites:
             spritetowrite: str = filter(sprite['name'])
             if is_int(spritetowrite) or spritetowrite in ["Sprite", "SpriteGroup", *banned_kwords]:
                 spritetowrite = f"Sprite_{spritetowrite}"
             f.write(f"{spritetowrite}: Sprite = Sprite(customdata={sprite['data']}, name=\"{cleanquotes(sprite['name'].replace(' ', '_').replace(';', ''))}\")\n")
+
+        # Write sprite groups
         for group in groups:
             group_name = filter(group['name'])
             if is_int(group_name) or group_name in ["Sprite", "SpriteGroup", *banned_kwords] or group_name in [sprite['name'] for sprite in sprites]:
@@ -227,13 +237,17 @@ def write_project_file():
                 for s in group['sprites']
             )
             f.write(f"{group_name}: SpriteGroup = SpriteGroup({members})\n")
-        f.write("def input(key: str) -> None:\n")
+
+        # Handle input (properly)
+        f.write("\ndef input(key: str) -> None:\n")
         f.write("    if key == \"escape\":\n")
-        f.write("        sys.exit()\n\n")
-        f.write("def update() -> None:\n")
-        f.write("    mouse.position = Vec2(0, 0)\n\n")
-        f.write("app.run()")
-        f.close()
+        f.write("        sys.exit()\n")
+
+        # Update function (no mouse.position reset)
+        f.write("\ndef update() -> None:\n")
+        f.write("    pass\n\n")
+
+        f.write("app.run()\n")
 
 def insert_newlines(text, max_chars):
     return '\n'.join(text[i:i+max_chars] for i in range(0, len(text), max_chars))
