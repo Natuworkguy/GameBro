@@ -83,8 +83,36 @@ That’s it. A clean GUI will launch. You can:
 
 Here's what a saved project file might look like:
 
-See [this document](https://natuworkguy.github.io/GameBro/#code-export).
+``` python
+# -*- coding: utf-8 -*-
+from gamebro import Sprite, SpriteGroup
+from ursina import *
+import sys
+import os
+from ursina.prefabs.first_person_controller import FirstPersonController
 
+# Project: MyGame
+# Created by GameBro Studio
+
+app: Ursina = Ursina(title="MyGame")
+window.title = "MyGame"
+if os.path.exists(os.path.join("assets", "icon.ico")):
+    window.icon = os.path.join("assets", "icon.ico")
+window.exit_button.visible = False
+window.borderless = True
+player: FirstPersonController = FirstPersonController(y=1)
+player.gravity = 1
+
+bro: Sprite = Sprite(customdata={'x': 0, 'y': 0, 'visible': True, 'id': 0}, name="bro")
+def input(key: str) -> None:
+    if key == "escape":
+        sys.exit()
+
+def update() -> None:
+    mouse.position = Vec2(0, 0)
+
+app.run()
+```
 ---
 
 # Doing it manually
