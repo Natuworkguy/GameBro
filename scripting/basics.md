@@ -14,7 +14,7 @@ A typical Gamebro project includes:
 Import them like so:
 
 ```python
-from gamebro import Sprite, SpriteGroup
+from gamebro import Sprite, SpriteGroup, entitify
 ````
 
 ## 🧠 Basic Usage Example
