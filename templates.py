@@ -1,9 +1,10 @@
-all = {
-    "boss": {
-        "display_color": [
-            255.0,
-            0.0,
-            0.0
-        ],
+all: dict = {
+    "default": {
+        "data": {
+            "x": 0,
+            "y": 0,
+            "visible": True,
+            "color": 'white'
+        }
     }
 }
