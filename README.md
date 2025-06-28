@@ -87,7 +87,7 @@ See [this document](https://natuworkguy.github.io/GameBro/#what-it-exports).
 
 ---
 
-# OR, if you want to go pro,
+# Doing it manually
 
 You can write the code yourself, using the gamebro module (see [this document](scripting/basics.md).)
 
