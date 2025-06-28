@@ -1,5 +1,19 @@
 [![Gamebro Logo](assets/icon.png)](https://github.com/Natuworkguy/GameBro/)
 [![Created by Natuworkguy](http://img.shields.io/badge/Created%20by-Natuworkguy-blue)](https://github.com/Natuworkguy/)
+
+
+![GitHub Repo stars](https://img.shields.io/github/stars/Natuworkguy/GameBro?style=social)
+![GitHub forks](https://img.shields.io/github/forks/Natuworkguy/GameBro?style=social)
+![GitHub watchers](https://img.shields.io/github/watchers/Natuworkguy/GameBro?style=social)
+![GitHub issues](https://img.shields.io/github/issues/Natuworkguy/GameBro)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/Natuworkguy/GameBro)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/Natuworkguy/GameBro)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/Natuworkguy/GameBro)
+![GitHub contributors](https://img.shields.io/github/contributors/Natuworkguy/GameBro)
+![GitHub last commit](https://img.shields.io/github/last-commit/Natuworkguy/GameBro)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/Natuworkguy/GameBro)
+![GitHub repo size](https://img.shields.io/github/repo-size/Natuworkguy/GameBro)
+![GitHub license](https://img.shields.io/github/license/Natuworkguy/GameBro)
 # Gamebro Studio
 
 **Gamebro** is a retro-inspired game engine GUI built with Python and Pygame — a twist on the legendary Gameboy, but made for building 2D games with style, ease, and a ton of custom potential.
