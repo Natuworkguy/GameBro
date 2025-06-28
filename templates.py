@@ -1,5 +1,9 @@
 all = {
     "boss": {
-        "display_color": "red",
+        "display_color": [
+            255.0,
+            0.0,
+            0.0
+        ],
     }
 }
