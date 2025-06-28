@@ -100,16 +100,20 @@ if os.path.exists(os.path.join("assets", "icon.ico")):
     window.icon = os.path.join("assets", "icon.ico")
 window.exit_button.visible = False
 window.borderless = True
-player: FirstPersonController = FirstPersonController(y=1)
+
+player = FirstPersonController(position=(0, 5, 0))
 player.gravity = 1
 
+platform: Entity = Entity(model='cube', color=color.green, scale=(10, 1, 10), position=(0, 0, 0), collider='box')
+
 bro: Sprite = Sprite(customdata={'x': 0, 'y': 0, 'visible': True, 'id': 0}, name="bro")
+
 def input(key: str) -> None:
     if key == "escape":
         sys.exit()
 
 def update() -> None:
-    mouse.position = Vec2(0, 0)
+    pass
 
 app.run()
 ```
