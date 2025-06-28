@@ -131,12 +131,17 @@
     <p>Make sprites like mods using a JSON file:</p>
     <pre><code id="code-json">{
   "name": "EvilBoss",
-  "template": "boss",
   "data": {
+    "x": 0,
+    "y": 0,
     "hp": 3000,
     "attack": "laser"
   },
-  "display_color": [255, 0, 0]
+  "display_color": [
+    255.0,
+    0.0,
+    0.0
+  ]
 }</code><button class="copy-btn" onclick="copyCode('code-json')">
       <span class="material-symbols-outlined">
         content_copy
