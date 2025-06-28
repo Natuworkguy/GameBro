@@ -122,39 +122,8 @@
   </section>
 
   <section id="examples" class="animate__animated animate__fadeInUp scroll-fade">
-    <h2 id="what-it-exports">📁 What It Exports</h2>
-    <pre><code id="code-export"># -*- coding: utf-8 -*-
-from gamebro import Sprite, SpriteGroup
-from ursina import *
-import sys
-import os
-from ursina.prefabs.first_person_controller import FirstPersonController
-
-# Project: MyGame
-# Created by GameBro Studio
-
-app: Ursina = Ursina(title="MyGame")
-window.title = "MyGame"
-if os.path.exists(os.path.join("assets", "icon.ico")):
-    window.icon = os.path.join("assets", "icon.ico")
-window.exit_button.visible = False
-window.borderless = True
-player: FirstPersonController = FirstPersonController(y=1)
-player.gravity = 1
-
-bro: Sprite = Sprite(customdata={'x': 0, 'y': 0, 'visible': True, 'id': 0}, name="bro")
-def input(key: str) -> None:
-    if key == "escape":
-        sys.exit()
-
-def update() -> None:
-    mouse.position = Vec2(0, 0)
-
-app.run()</code><button class="copy-btn" onclick="copyCode('code-export')">
-      <span class="material-symbols-outlined">
-        content_copy
-      </span>
-    </button></pre>
+    <h2>📁 What It Exports</h2>
+    <a href="https://github.com/Natuworkguy/GameBro/blob/main/README.md#-example-output">See this article</a>
   </section>
 
   <section id="json" class="animate__animated animate__fadeInUp scroll-fade">
