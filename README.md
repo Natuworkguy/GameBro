@@ -83,13 +83,8 @@ That’s it. A clean GUI will launch. You can:
 
 Here's what a saved project file might look like:
 
-```python
-from gamebro import Sprite, SpriteGroup
+See [this document](https://natuworkguy.github.io/GameBro/#what-it-exports).
 
-# Project: MyAwesomeGame
-Player = Sprite(customdata={'x': 0, 'y': 0, 'visible': True}, name="Player")
-Enemy = Sprite(customdata={'x': 100, 'y': 50, 'visible': True}, name="Enemy")
-```
 ---
 
 # OR, if you want to go pro,
