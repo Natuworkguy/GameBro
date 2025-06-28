@@ -197,7 +197,7 @@ def write_project_file():
     filename = filter(remove_non_ascii(f"{project_name}.py"))
     with open(filename, "w") as f:
         f.write("# -*- coding: utf-8 -*-\n")
-        f.write("from gamebro import Sprite, SpriteGroup\n")
+        f.write("from gamebro import Sprite, SpriteGroup, entitify\n")
         f.write("from ursina import *\n")
         f.write("import sys\n")
         f.write("import os\n")
@@ -223,7 +223,12 @@ def write_project_file():
             spritetowrite: str = filter(sprite['name'])
             if is_int(spritetowrite) or spritetowrite in ["Sprite", "SpriteGroup", *banned_kwords]:
                 spritetowrite = f"Sprite_{spritetowrite}"
-            f.write(f"{spritetowrite}: Sprite = Sprite(customdata={sprite['data']}, name=\"{cleanquotes(sprite['name'].replace(' ', '_').replace(';', ''))}\")\n")
+            datatowrite: dict = sprite['data']
+            if "display_color" in sprite:
+                if isinstance(sprite["display_color"], list):
+                    datatowrite["color"] = sprite["display_color"]
+            f.write(f"{spritetowrite}: Sprite = Sprite(customdata={datatowrite}, name=\"{cleanquotes(sprite['name'].replace(' ', '_').replace(';', ''))}\")\n")
+            f.write(f"E_{spritetowrite}: Entity = entitify({spritetowrite})\n")
 
         # Write sprite groups
         for group in groups:
@@ -297,7 +302,7 @@ def newsprite(data: dict[Any, Any] = None):
             return
         if data is not None:
             data["id"] = len(sprites)
-        sprites.append(data or {"name": name, "data": {"x": 0, "y": 0, "visible": True, "id": len(sprites)}})
+        sprites.append(data or {"name": name, "data": {"x": 0, "y": 0, "visible": True, "color": "white", "id": len(sprites)}})
 
 def newgroup():
     name = get_user_input("Enter group name: ")
