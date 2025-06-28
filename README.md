@@ -85,7 +85,7 @@ Here's what a saved project file might look like:
 
 ``` python
 # -*- coding: utf-8 -*-
-from gamebro import Sprite, SpriteGroup
+from gamebro import Sprite, SpriteGroup, entitify
 from ursina import *
 import sys
 import os
@@ -106,7 +106,8 @@ player.gravity = 1
 
 platform: Entity = Entity(model='cube', color=color.green, scale=(10, 1, 10), position=(0, 0, 0), collider='box')
 
-bro: Sprite = Sprite(customdata={'x': 0, 'y': 0, 'visible': True, 'id': 0}, name="bro")
+bro: Sprite = Sprite(customdata={'x': 0, 'y': 0, 'visible': True, 'color': 'white'}, name="bro")
+E_bro: Entity = entitify(bro)
 
 def input(key: str) -> None:
     if key == "escape":
@@ -116,7 +117,6 @@ def update() -> None:
     pass
 
 app.run()
-```
 ---
 
 # Doing it manually
