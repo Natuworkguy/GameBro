@@ -127,6 +127,6 @@ Made with ❤️ by [`Natuworkguy`](https://github.com/Natuworkguy)
 
 ---
 
-## 📄 License
+## [📄 License](LICENSE)
 
 MIT License. Do what you want, just don’t sell it as your own. Be cool. 😎
