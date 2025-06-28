@@ -1,6 +1,7 @@
 from typing import Any, Self, Callable
 import uuid
 from uuid import UUID
+from ursina import Entity, color
 
 class EngineError(Exception):
     """
@@ -22,10 +23,6 @@ class Sprite:
                 description: Sprite name
                 type: str
         """
-        if customdata is None:
-            customdata = {}
-        if not isinstance(customdata, dict):
-            raise EngineError("Custom data must be a dictionary.")
         self.event_listeners: dict[str, Callable] = {}
         self.customdata: dict[Any] = customdata or {}
         self.id: UUID = uuid.uuid4()
@@ -114,3 +111,13 @@ class SpriteGroup:
         self.elements.append(sprite)
         if "group-add" in sprite.event_listeners:
             sprite.event_listeners["group-add"](sprite, self)
+
+def entitify(sprite: Sprite) -> Entity:
+    entity: Entity = Entity(model="cube")
+    if "x" in sprite.customdata:
+        entity.x = sprite.customdata["x"]
+    if "y" in sprite.customdata:
+        entity.y = sprite.customdata["y"]
+    if "color" in sprite.customdata and isinstance(sprite.customdata["color"], list) and len(sprite.customdata["color"]) == 3:
+        entity.color = color.rgb(*sprite.customdata["color"])
+    return entity
