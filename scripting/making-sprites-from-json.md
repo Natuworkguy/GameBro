@@ -5,12 +5,12 @@ Gamebro allows you to create sprites from JSON files, making it easier to load c
 
 ## Supported Keys
 
-| Key            | Type    | Description |
-|----------------|---------|-------------|
-| `name`         | string  | The name of the sprite (required). |
-| `data`         | object  | A dictionary of custom data fields for the sprite (required). |
-| `display_color`| array   | An RGB list (e.g. `[255, 0, 0]`) to set the sprite name's color in the GUI. Values must be integers between 0 and 255. |
-| `template`     | string  | A preset behavior or style that will override the other properties if present. (e.g. `"boss"` sets red name color). |
+| Key            | Type       | Description |
+|----------------|------------|-------------|
+| `name`         | string     | The name of the sprite (required). |
+| `data`         | object     | A dictionary of custom data fields for the sprite (required). |
+| `display_color`| array[int] | An RGB list (e.g. `[255, 0, 0]`) to set the sprite name's color in the GUI. Values must be integers between 0 and 255. |
+| `template`     | string     | A preset behavior or style that will override the other properties if present. (e.g. `"boss"` sets red name color). |
 
 ## Templates
 
