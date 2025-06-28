@@ -117,6 +117,8 @@ def update() -> None:
     pass
 
 app.run()
+```
+
 ---
 
 # Doing it manually
