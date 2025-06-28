@@ -18,7 +18,7 @@ Templates are like mods: predefined behaviors that can customize sprites in spec
 
 ### Available Templates
 
-- `"boss"` — Sets `display_color` to red.
+- `"default"` - Sets the default `data` value
 
 More templates will be added in future updates!
 
@@ -39,13 +39,8 @@ More templates will be added in future updates!
 
 ```json
 {
-  "template": "boss",
+  "template": "default",
   "name": "FinalBoss",
-  "data": {
-    "x": 0,
-    "y": 0,
-    "visible": true
-  }
 }
 ```
 
