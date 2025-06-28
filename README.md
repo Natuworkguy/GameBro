@@ -24,9 +24,9 @@
 ### ✅ Requirements
 - Python 3.8+
 - [`pygame`](https://www.pygame.org/)
-
+- [`ursina`](https://www.ursinaengine.org/)
 ```bash
-pip install pygame
+pip install -r requirements.txt
 ````
 
 ### ▶️ Run it
