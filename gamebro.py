@@ -57,8 +57,6 @@ class SpriteGroup:
             Sprites:
                 type: Sprite
         """
-        if not all(isinstance(i, Sprite) for i in elements):
-            raise EngineError("All elements in a group must be of type Sprite.")
         self.elements: list[Sprite] = list(elements)
     def __str__(self: Self) -> str:
         """
@@ -105,8 +103,6 @@ class SpriteGroup:
                 type: Sprite
                 description: Sprite to add
         """
-        if not isinstance(sprite, Sprite):
-            raise EngineError("All elements in a group must be of type Sprite.")
         self.elements.append(sprite)
         if "group-add" in sprite.event_listeners:
             sprite.event_listeners["group-add"](sprite, self)
@@ -122,4 +118,10 @@ def entitify(sprite: Sprite) -> Entity:
     if "hitbox" in sprite.customdata:
         if sprite.customdata["hitbox"] == True:
             entity.collider = "box"
+    if "texture" in sprite.customdata:
+        if sprite.customdata["texture"] is not None:
+            entity.texture = sprite.customdata["texture"]
+    if "visible" in sprite.customdata:
+        if sprite.customdata["visible"] == False:
+            entity.visible = False
     return entity
