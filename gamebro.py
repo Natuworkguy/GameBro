@@ -1,4 +1,4 @@
-from typing import Any, Self, Callable
+from typing import Any, Self, Callable, Optional
 import uuid
 from uuid import UUID
 from ursina import Entity, color
@@ -10,7 +10,7 @@ class EngineError(Exception):
     pass
 
 class Sprite:
-    def __init__(self: Self, customdata: dict[Any] = None, **options) -> None:
+    def __init__(self: Self, customdata: dict[Any] = None, **options: Any) -> None:
         """
         A sprite, think a player, or a monster
 
@@ -63,7 +63,7 @@ class SpriteGroup:
         Developer friendly way to view the sprite group
         """
         return f"<SpriteGroup with sprites: {self.elements}>"
-    def __getitem__(self: Self, key: int) -> Sprite:
+    def __getitem__(self: Self, key: int) -> Optional[Sprite]:
         """
         Get an item from the group using a key
         
