@@ -149,9 +149,9 @@ def remove_non_ascii(text):
     """
     return text.encode('ascii', 'ignore').decode('ascii')    
 
-def filter(text):
+def filter(text: str):
     """
-    Filters a string to remove non-ASCII characters and certain symbols.
+    Filters a string to remove certain symbols.
 
     Args:
         text (str): The input string.
@@ -159,7 +159,21 @@ def filter(text):
     Returns:
         str: The filtered string.
     """
-    return text.replace(' ', '_').replace(';', '').replace('"', '').replace("'", "").replace(":", "_").replace("/", "_").replace("\\", "_").replace("`", "_").replace("?", "_").replace("<", "_").replace(">", "_").replace("|", "_").replace("!", "_").replace("-", "_")
+    return text\
+    .replace(' ', '_')\
+    .replace(';', '')\
+    .replace('"', '')\
+    .replace("'", "")\
+    .replace(":", "_")\
+    .replace("/", "_")\
+    .replace("\\", "_")\
+    .replace("`", "_")\
+    .replace("?", "_")\
+    .replace("<", "_")\
+    .replace(">", "_")\
+    .replace("|", "_")\
+    .replace("!", "_")\
+    .replace("-", "_")
 
 def draw_text(text, x, y, surface, color=TEXT_COLOR):
     lines = text.splitlines()
@@ -167,12 +181,12 @@ def draw_text(text, x, y, surface, color=TEXT_COLOR):
         label = FONT.render(line, True, color)
         surface.blit(label, (x, y + i * FONT.get_height()))
 
-def draw_button(rect, text, hovered):
+def draw_button(rect, text, hovered) -> None:
     color = BUTTON_HOVER_COLOR if hovered else BUTTON_COLOR
     pygame.draw.rect(screen, color, rect, border_radius=8)
     draw_text(text, rect.x + 20, rect.y + (rect.height - FONT.get_height()) // 2, screen, ACCENT_COLOR if hovered else TEXT_COLOR)
 
-def is_int(s):
+def is_int(s: Any) -> bool:
     try:
         int(s)
         return True
@@ -244,12 +258,10 @@ def write_project_file() -> None:
             )
             f.write(f"{group_name}: SpriteGroup = SpriteGroup({members})\n")
 
-        # Handle input (properly)
         f.write("\ndef input(key: str) -> None:\n")
         f.write("    if key == \"escape\":\n")
         f.write("        sys.exit()\n")
 
-        # Update function (no mouse.position reset)
         f.write("\ndef update() -> None:\n")
         f.write("    pass\n\n")
 
@@ -258,7 +270,7 @@ def write_project_file() -> None:
 def insert_newlines(text, max_chars):
     return '\n'.join(text[i:i+max_chars] for i in range(0, len(text), max_chars))
 
-def get_user_input(prompt, initial="") -> Optional[str]:
+def get_user_input(prompt: str, initial="") -> Optional[str]:
     """Capture user keyboard input until Enter is pressed."""
     text = initial
     active = True
@@ -470,13 +482,17 @@ while True:
             elif event.key == pygame.K_o and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 jsonspritefile: str = fd.askopenfilename(title="Open JSON sprite file", filetypes=[
                     ('JSON File', '.json'),
-                    ('JSON Sprite File', '.jsonsprite')
                 ])
                 if not jsonspritefile:
                     continue
             
                 with open(jsonspritefile, 'r') as f:
-                    jsonspritedata: dict[Any, Any] = json.load(f)
+                    try:
+                        jsonspritedata: dict[Any, Any] = json.load(f)
+                    except json.decoder.JSONDecodeError as e:
+                        wait_for_keypress(f"Error loading: {e}")
+                        continue
+                    f.close()
             
                 # Validate display color
                 if "display_color" in jsonspritedata:
@@ -511,7 +527,7 @@ while True:
                     if newkey in ["name", "data", "id"]:
                         wait_for_keypress("Key unavailable")
                         continue
-                    newval: str = get_user_input("Enter the value for the new key: ")
+                    newval: str = get_user_input("Enter the value for the key: ")
                     if newkey == "x" or newkey == "y":
                         if is_int(newval):
                             newval = int(newval)
