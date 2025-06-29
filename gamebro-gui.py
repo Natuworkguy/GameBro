@@ -234,10 +234,12 @@ def write_project_file() -> None:
         f.write("platform: Entity = Entity(model='cube', color=color.green, scale=(10, 1, 10), position=(0, 0, 0), collider='box')\n\n")
 
         # Write sprites
+        existing_names = set()
         for sprite in sprites:
             spritetowrite: str = filter(sprite['name'])
             if is_int(spritetowrite) or spritetowrite in ["Sprite", "SpriteGroup", *banned_kwords]:
                 spritetowrite = f"Sprite_{spritetowrite}"
+            existing_names.add(spritetowrite)
             datatowrite: dict = sprite['data']
             if "display_color" in sprite:
                 if isinstance(sprite["display_color"], list):
@@ -250,14 +252,18 @@ def write_project_file() -> None:
             group_name = filter(group['name'])
             if is_int(group_name) or group_name in ["Sprite", "SpriteGroup", *banned_kwords] or group_name in [sprite['name'] for sprite in sprites]:
                 group_name = f"Group_{group_name}"
-            members = ','.join(
-                filter(s).replace(' ', '_').replace(';', '').replace('"', '').replace("'", "")
-                if not (is_int(filter(s)) or filter(s) in ["Sprite", "SpriteGroup", *banned_kwords])
-                else f"Sprite_{filter(s)}"
-                for s in group['sprites']
-            )
-            f.write(f"{group_name}: SpriteGroup = SpriteGroup({members})\n")
 
+            members = []
+            for s in group['sprites']:
+                s_clean = filter(s)
+                if is_int(s_clean) or s_clean in ["Sprite", "SpriteGroup", *banned_kwords]:
+                    s_clean = f"Sprite_{s_clean}"
+                if s_clean in existing_names:
+                    members.append(s_clean)
+
+            f.write(f"{group_name}: SpriteGroup = SpriteGroup({', '.join(members)})\n")
+
+        # Input and update
         f.write("\ndef input(key: str) -> None:\n")
         f.write("    if key == \"escape\":\n")
         f.write("        sys.exit()\n")
