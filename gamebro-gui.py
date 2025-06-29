@@ -514,12 +514,24 @@ while True:
                     if not valid:
                         continue  # Skip adding sprite if color is invalid
                 if "template" in jsonspritedata:
-                    if jsonspritedata["template"] in templates.all:
-                        for key, value in templates.all[jsonspritedata["template"]].items():
-                            jsonspritedata[key] = value
+                    if isinstance(jsonspritedata["template"], str):
+                        if jsonspritedata["template"] in templates.all:
+                            for key, value in templates.all[jsonspritedata["template"]].items():
+                                jsonspritedata[key] = value
+                        else:
+                            wait_for_keypress(f"Template '{jsonspritedata['template']}' not found.")
+                            continue
+                    elif isinstance(jsonspritedata["template"], list):
+                        for i in jsonspritedata["template"]:
+                            if i in templates.all:
+                                for key, value in templates.all[i].items():
+                                    jsonspritedata[key] = value
+                            else:
+                                wait_for_keypress(f"Template '{i}' not found.")
+                                continue
                     else:
-                        wait_for_keypress(f"Template '{jsonspritedata['template']}' not found.")
-                        continue
+                        wait_for_keypress("Wrong data type for template.")
+
                 newsprite(jsonspritedata)
             elif event.key == pygame.K_n and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 newsprite()
