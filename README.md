@@ -14,15 +14,15 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/Natuworkguy/GameBro)
 ![GitHub repo size](https://img.shields.io/github/repo-size/Natuworkguy/GameBro)
 [![GitHub license](https://img.shields.io/github/license/Natuworkguy/GameBro)](LICENCE)
-# Gamebro Studio
+# `Gamebro Studio`
 
-**Gamebro** is a retro-inspired game engine GUI built with Python and Pygame — a twist on the legendary Gameboy, but made for building 2D games with style, ease, and a ton of custom potential.
+**`Gamebro`** is a retro-inspired game engine GUI built with Python and Pygame — a twist on the legendary Gameboy, but made for building 2D games with style, ease, and a ton of custom potential.
 
 > Think Unity, but vibin’ on 16-bit aesthetics and simplicity. 💾🕹️
 
 ---
 
-## ✨ Features
+## `✨ Features`
 
 - 🔧 Sprite system with editable custom data
 - 🖱️ Clickable GUI with panels (Sprites, Inspector, Toolbar)
@@ -33,17 +33,17 @@
 
 ---
 
-## 🚀 Getting Started
+## `🚀 Getting Started`
 
-### ✅ Requirements
-- Python 3.8+
+### `✅ Requirements`
+- `Python 3.8+`
 - [`pygame`](https://www.pygame.org/)
 - [`ursina`](https://www.ursinaengine.org/)
 ```bash
 pip install -r requirements.txt
 ````
 
-### ▶️ Run it
+### `▶️ Run it`
 
 ```bash
 python gamebro_gui.py
@@ -58,12 +58,12 @@ That’s it. A clean GUI will launch. You can:
 * Save your project (`Ctrl + S`) as a real `.py` file!
 
 ---
-# Gamebro Studio Keybinds
+# `Gamebro Studio Keybinds`
 
-**Global:**
+**`Global`:**
 - `Ctrl+S` — Save Project
 
-**Sprites:**
+**`Sprites`:**
 - `Ctrl+N` — Add New Sprite
 - `Ctrl+X` — Delete Selected Sprite (also removes it from all groups)
 - `Ctrl+K` — Add Data Key to Selected Sprite
@@ -72,7 +72,7 @@ That’s it. A clean GUI will launch. You can:
 - `R`      — Rename Selected Sprite (when a sprite is selected)
 - `C`      — Clear Selection
 
-**Groups:**
+**`Groups`:**
 - `Ctrl+G` — Add New Group
 - `Ctrl+X` — Delete Selected Group (when a group is selected)
 - `Ctrl+A` — Add Sprite to Selected Group
@@ -80,11 +80,11 @@ That’s it. A clean GUI will launch. You can:
 - `R`      — Rename Selected Group (when a group is selected)
 - `C`      — Clear Selection
 
-**Navigation:**
+**`Navigation`:**
 - Click on sprite name — Select sprite
 - Click on group name  — Select group
 
-**Inspector:**
+**`Inspector`:**
 - Shows details for selected sprite or group.
 
 ---
@@ -93,7 +93,7 @@ That’s it. A clean GUI will launch. You can:
 
 ---
 
-## 🧠 Example Output
+## `🧠 Example Output`
 
 Here's what a saved project file might look like:
 
@@ -135,18 +135,18 @@ app.run()
 
 ---
 
-# Doing it manually
+# `Doing it manually`
 
 You can write the code yourself, using the gamebro module (see [this document](scripting/basics.md).)
 
 ---
 
-## 🙌 Credits
+## `🙌 Credits`
 
 Made with ❤️ by [`Natuworkguy`](https://github.com/Natuworkguy)
 
 ---
 
-## [📄 License](LICENSE)
+## [`📄 License`](LICENSE)
 
 MIT License. Do what you want, just don’t sell it as your own. Be cool. 😎
