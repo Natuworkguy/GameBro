@@ -302,7 +302,7 @@ def get_user_input(prompt: str, initial="") -> Optional[str]:
         clock.tick(FPS)
     return text
 
-def newsprite(data: Optional[dict[Any, Any]] = None):
+def newsprite(data: Optional[dict[Any, Any]] = None) -> None:
     if len(sprites) < 23:
         if data is None:
             name = get_user_input("Enter sprite name: ")
@@ -323,7 +323,7 @@ def newsprite(data: Optional[dict[Any, Any]] = None):
             data["id"] = len(sprites)
         sprites.append(data or {"name": name, "data": {"x": 0, "y": 0, "visible": True, "color": "white", "id": len(sprites)}})
 
-def newgroup():
+def newgroup() -> None:
     name = get_user_input("Enter group name: ")
     if name and name.strip():
         if any(g['name'] == name for g in groups):
@@ -376,10 +376,10 @@ def remove_sprite_from_group(group_idx):
     else:
         wait_for_keypress("Invalid sprite name!")
 
-def delete_group(group_idx):
+def delete_group(group_idx) -> None:
     del groups[group_idx]
 
-def rename_group(group_idx):
+def rename_group(group_idx) -> None:
     name = get_user_input("Rename group to:", initial=groups[group_idx]['name'])
     if name and name.strip():
         if any(g['name'] == name for g in groups if g != groups[group_idx]):
@@ -387,7 +387,7 @@ def rename_group(group_idx):
             return
         groups[group_idx]['name'] = name
 
-def remove_sprite_from_all_groups(sprite_name):
+def remove_sprite_from_all_groups(sprite_name) -> None:
     for group in groups:
         if sprite_name in group['sprites']:
             group['sprites'].remove(sprite_name)
