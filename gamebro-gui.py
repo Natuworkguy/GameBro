@@ -173,7 +173,8 @@ def filter(text: str):
     .replace(">", "_")\
     .replace("|", "_")\
     .replace("!", "_")\
-    .replace("-", "_")
+    .replace("-", "_")\
+    .replace("$", "_")\
 
 def draw_text(text, x, y, surface, color=TEXT_COLOR):
     lines = text.splitlines()
