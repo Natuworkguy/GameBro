@@ -552,6 +552,7 @@ while True:
                             newval = int(newval)
                         else:
                             wait_for_keypress("X and Y elements must be a valid int")
+                            continue
                     if newval == 'None':
                         newval = None
                     elif newval == 'False':
