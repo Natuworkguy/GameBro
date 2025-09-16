@@ -31,8 +31,7 @@ class Sprite:
         """
         Developer friendly way to view the sprite
         """
-        if "str-view" in self.event_listeners:
-            self.event_listeners["str-view"](self)
+
         return f"<Sprite \"{self.name}\" with customdata {self.customdata}>"
     def addeventlistener(self, event: str) -> Callable[[Callable], Callable]:
         """
@@ -125,3 +124,4 @@ def entitify(sprite: Sprite) -> Entity:
         if sprite.customdata["visible"] == False:
             entity.visible = False
     return entity
+
