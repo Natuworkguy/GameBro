@@ -44,7 +44,7 @@ More templates will be added in future updates!
 ```json
 {
   "template": "default",
-  "name": "FinalBoss",
+  "name": "FinalBoss"
 }
 ```
 
