@@ -91,6 +91,11 @@ That’s it. A clean GUI will launch. You can:
 
 > Tip: Most actions require a sprite or group to be selected. Use the mouse to select items in the Sprites or Groups panel.
 
+>[!IMPORTANT]
+>
+> In the event the player falls thru the platform upon game launch, add [this file](https://github.com/Natuworkguy/GameBro/blob/main/fixes/hitbox.json) to your project (using `CTRL + O`).
+> This file adds a hitbox that prevents the player from falling.
+
 ---
 
 ## `🧠 Example Output`
