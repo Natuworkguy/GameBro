@@ -1,0 +1,11 @@
+{
+  "name": "hitbox",
+  "data": {
+    "x": -1,
+    "y": -1,
+    "visible": true,
+    "color": "white",
+    "hitbox": true
+  },
+  "display_color": [255, 0, 0]
+}
