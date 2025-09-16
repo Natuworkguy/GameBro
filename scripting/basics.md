@@ -62,7 +62,6 @@ The current supported events (more coming later):
 
 * `"group-add"` — triggered when a sprite is added to a group
 * `"group-removed"` — triggered when a sprite is removed from a group
-* `"str-view"` — triggered when a sprite is viewed as a string
 
 ---
 
