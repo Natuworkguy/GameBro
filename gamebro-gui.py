@@ -6,7 +6,6 @@ import tkinter.filedialog as fd
 from tkinter import PhotoImage
 import tkinter as tk
 import _tkinter
-import tkinter.messagebox as msgbox
 import json
 import random
 import math
@@ -274,8 +273,6 @@ def write_project_file() -> None:
         f.write("    pass\n\n")
 
         f.write("app.run()\n")
-
-        msgbox.showinfo("GameBro", "Project saved successfully")
 
 def insert_newlines(text, max_chars):
     return '\n'.join(text[i:i+max_chars] for i in range(0, len(text), max_chars))
@@ -695,3 +692,4 @@ while True:
 
     pygame.display.flip()
     clock.tick(FPS)
+
