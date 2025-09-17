@@ -6,6 +6,7 @@ import tkinter.filedialog as fd
 from tkinter import PhotoImage
 import tkinter as tk
 import _tkinter
+import tkinter.messagebox as msgbox
 import json
 import random
 import math
@@ -228,7 +229,7 @@ def write_project_file() -> None:
         f.write("window.borderless = True\n\n")
 
         # Player above platform
-        f.write("player = FirstPersonController(position=(0, 5, 0))\n")
+        f.write("player = FirstPersonController(position=(0, 0, 0))\n")
         f.write("player.gravity = 1\n\n")
 
         # Ground platform
@@ -273,6 +274,8 @@ def write_project_file() -> None:
         f.write("    pass\n\n")
 
         f.write("app.run()\n")
+
+        msgbox.showinfo("GameBro", "Project saved successfully")
 
 def insert_newlines(text, max_chars):
     return '\n'.join(text[i:i+max_chars] for i in range(0, len(text), max_chars))
@@ -568,7 +571,7 @@ while True:
                     if keytodelete in ["name", "data", "visible", "id"]:
                         wait_for_keypress("Cannot delete system key")
                         continue
-                    del sprites[selected_sprite_index]['data'][keytodelete]
+                    sprites[selected_sprite_index]['data'].pop(keytodelete, None)
             elif event.key == pygame.K_x and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 if spriteselected:
                     sprite_name = sprites[selected_sprite_index]['name']
