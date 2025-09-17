@@ -322,7 +322,7 @@ def newsprite(data: Optional[dict[Any, Any]] = None) -> None:
             return
         if data is not None:
             data["id"] = len(sprites)
-        sprites.append(data or {"name": name, "data": {"x": 0, "y": 0, "visible": True, "color": "white", "id": len(sprites)}})
+        sprites.append(data or {"name": name, "data": {"x": 0, "y": 0, "visible": True, "id": len(sprites)}})
 
 def newgroup() -> None:
     name = get_user_input("Enter group name: ")
@@ -692,4 +692,3 @@ while True:
 
     pygame.display.flip()
     clock.tick(FPS)
-
