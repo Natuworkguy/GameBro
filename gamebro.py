@@ -1,7 +1,7 @@
 from typing import Any, Callable, Optional
 import uuid
 from uuid import UUID
-from ursina import Entity, color
+from ursina import Entity, color # type: ignore
 
 class EngineError(Exception):
     """
@@ -10,7 +10,7 @@ class EngineError(Exception):
     pass
 
 class Sprite:
-    def __init__(self, customdata: dict[Any] = None, **options: Any) -> None:
+    def __init__(self, customdata: Optional[dict[Any, Any]] = None, **options: Any) -> None:
         """
         A sprite, think a player, or a monster
 
@@ -24,14 +24,15 @@ class Sprite:
                 type: str
         """
         self.event_listeners: dict[str, Callable] = {}
-        self.customdata: dict[Any] = customdata or {}
+        self.customdata: dict[Any, Any] = customdata or {}
         self.id: UUID = uuid.uuid4()
         self.name: str = options.get("name", f"Sprite-{str(self.id)[:8]}")
     def __str__(self) -> str:
         """
         Developer friendly way to view the sprite
         """
-
+        if "str-view" in self.event_listeners:
+            self.event_listeners["str-view"](self)
         return f"<Sprite \"{self.name}\" with customdata {self.customdata}>"
     def addeventlistener(self, event: str) -> Callable[[Callable], Callable]:
         """
@@ -74,7 +75,7 @@ class SpriteGroup:
             return self.elements[key]
         except IndexError as e:
             raise EngineError("Key does not exist in group.") from e
-    def get(self, key: int) -> Sprite:
+    def get(self, key: int) -> Optional[Sprite]:
         """
         See: __getitem__
         """
@@ -124,4 +125,3 @@ def entitify(sprite: Sprite) -> Entity:
         if sprite.customdata["visible"] == False:
             entity.visible = False
     return entity
-
